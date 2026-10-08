@@ -1,218 +1,523 @@
-<html data-type="html" data-identifier="de782797-0aa0-4c4e-9eb9-43a99b25b05d" data-title="WPP Media EKE Tool" data-version="19" width="1200" height="1150"><head>
-<meta charset="UTF-8">
-<style>
-  * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
-  body { margin:0; padding:24px; background:#000050; color:#000050; }
-  h1,h2,h3 { margin:0 0 8px 0; }
-  #mainTitle { font-size:24px; color:#FFFFFF; }
-  .card { background:#FFFFFF; border:1px solid #000050; border-radius:10px; padding:18px 20px; margin-bottom:18px; box-shadow:0 2px 8px rgba(0,0,80,0.08); }
-  .row-flex { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
-  button { cursor:pointer; border:none; border-radius:6px; padding:10px 16px; font-size:14px; font-weight:600; transition:0.15s; }
-  .btn-primary { background:#B0F467; color:#000050; }
-  .btn-primary:hover { background:#000050; color:#FFFFFF; }
-  .btn-secondary { background:#FFFFFF; color:#000050; border:2px solid #000050; }
-  .btn-secondary:hover { background:#93DFE3; color:#000050; }
-  .btn-success { background:#B0F467; color:#000050; }
-  .btn-success:hover { background:#000050; color:#B0F467; }
-  .btn-purple { background:#000050; color:#FFFFFF; }
-  .btn-purple:hover { background:#93DFE3; color:#000050; }
-  .btn-success:disabled, .btn-primary:disabled, .btn-secondary:disabled { opacity:0.5; cursor:not-allowed; }
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WPP Media EKE Tool</title>
+    <style>
+      :root {
+        --navy: #000050;
+        --navy-soft: rgba(0, 0, 80, 0.12);
+        --green: #b0f467;
+        --turquoise: #93dfe3;
+        --white: #ffffff;
+      }
 
-  .btn-toggle { background:#FFFFFF; color:#000050; border:2px solid #000050; }
-  .btn-toggle.active { background:#000050; color:#B0F467; border-color:#000050; }
-  .btn-toggle .toggle-dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:#93DFE3; margin-right:6px; vertical-align:middle; }
-  .btn-toggle.active .toggle-dot { background:#B0F467; }
+      * {
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Arial, sans-serif;
+      }
 
-  .lang-switch { display:flex; align-items:center; gap:16px; background:#FFFFFF; border:2px solid #000050; border-radius:8px; padding:10px 14px; }
-  .lang-switch label { display:flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:#000050; cursor:pointer; }
-  .lang-switch input[type="radio"] { accent-color:#000050; width:16px; height:16px; cursor:pointer; }
+      body {
+        margin: 0;
+        padding: 24px;
+        background: var(--navy);
+        color: var(--navy);
+      }
 
-  .brand-header { text-align:center; margin-bottom:6px; }
-  #brandWordmark { font-size:32px; font-weight:600; color:#FFFFFF; letter-spacing:0.3px; line-height:1.1; }
-  #toolSubtitle { text-align:center; font-size:16px; font-weight:700; color:#000050; margin-top:4px; margin-bottom:6px; letter-spacing:0.02em; }
+      .brand-header {
+        text-align: center;
+        margin-bottom: 18px;
+      }
 
-#companyLogo {
-  display:block;
-  margin:0 auto 8px auto;
-  height:62px;
-  width:auto;
-  max-width:360px;
-  object-fit:contain;
-}
+      #companyLogo {
+        display: block;
+        margin: 0 auto 8px auto;
+        height: 62px;
+        width: auto;
+        max-width: 360px;
+        object-fit: contain;
+      }
 
-  #dropZone {
-    border:2px dashed #000050; border-radius:10px; padding:30px 20px; text-align:center;
-    background:#FFFFFF; color:#000050; cursor:pointer; transition:0.15s;
-  }
-  #dropZone.hover { background:#B0F467; border-color:#000050; color:#000050; }
-  #dropZone .dz-icon { font-size:32px; display:block; margin-bottom:8px; }
-  #dropZone .dz-sub { font-size:12px; color:#000050; opacity:0.65; margin-top:4px; }
-  #fileInput { display:none; }
+      #brandWordmark {
+        font-size: 32px;
+        font-weight: 600;
+        color: var(--white);
+        letter-spacing: 0.3px;
+        line-height: 1.1;
+      }
 
-  #uploadIntro { font-size:15px; color:#000050; opacity:0.75; margin:4px 0 14px 0; }
+      .card {
+        background: var(--white);
+        border: 1px solid var(--navy);
+        border-radius: 10px;
+        padding: 18px 20px;
+        margin-bottom: 18px;
+        box-shadow: 0 2px 8px rgba(0, 0, 80, 0.08);
+      }
 
-  /* Kopfdaten Styling (Bearbeitbare Eingabefelder) */
-  #kopfInfo { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:10px; }
-  .kopf-item { background:#FFFFFF; border:1px solid #000050; border-radius:6px; padding:8px 12px; }
-  .kopf-item span.label { display:block; font-size:11px; color:#000050; opacity:0.6; text-transform:uppercase; letter-spacing:0.03em; }
-  .kopf-item input.kopf-input { 
-    width:100%; 
-    border:none; 
-    background:transparent; 
-    font-size:14px; 
-    font-weight:600; 
-    color:#000050; 
-    margin-top:2px; 
-    padding:2px 0; 
-    outline:none; 
-    font-family:inherit; 
-  }
-  .kopf-item input.kopf-input:focus { 
-    background:rgba(147,223,227,0.25); 
-    border-radius:4px; 
-    padding:2px 4px; 
-  }
+      h1, h2, h3 {
+        margin: 0 0 8px 0;
+      }
 
-  #optionsBar { margin-bottom:12px; }
-  #optionsBar .opt-hint { font-size:12px; color:#000050; opacity:0.7; margin-top:10px; }
+      .row-flex {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
 
-  #columnDashboard, #rawColumnDashboard { margin-top:12px; padding-top:12px; border-top:1px solid #000050; display:none; max-height:340px; overflow-y:auto; }
-  #columnDashboard.open, #rawColumnDashboard.open { display:block; }
-  .checkbox-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:10px; }
-  .checkbox-item { display:flex; align-items:center; gap:6px; font-size:13px; color:#000050; }
-  .dashboard-actions { margin-top:10px; display:flex; gap:8px; }
-  .dashboard-actions button { font-size:12px; padding:6px 10px; }
+      button {
+        cursor: pointer;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 16px;
+        font-size: 14px;
+        font-weight: 600;
+        transition: 0.15s ease-in-out;
+      }
 
-  #tableWrapper { overflow-x:auto; margin-top:14px; border:1px solid #000050; border-radius:8px; }
-  table { border-collapse:collapse; width:100%; font-size:13px; min-width:700px; }
-  thead th { background:#000050; color:#FFFFFF; padding:10px 12px; text-align:left; white-space:nowrap; position:sticky; top:0; }
-  tbody td { padding:8px 12px; border-bottom:1px solid rgba(0,0,80,0.15); white-space:nowrap; max-width:280px; overflow:hidden; text-overflow:ellipsis; color:#000050; }
-  tbody tr:nth-child(even) { background:rgba(147,223,227,0.25); }
-  tbody tr:hover { background:rgba(176,244,103,0.3); }
-  tfoot td { padding:10px 12px; white-space:nowrap; background:#000050; color:#FFFFFF; font-weight:700; border-top:2px solid #000050; }
-  .num-col { text-align:right; font-variant-numeric:tabular-nums; }
-  .tag-inventory { background:#93DFE3; color:#000050; padding:2px 8px; border-radius:12px; font-size:12px; font-weight:600; }
-  .tag-sonstige { background:#B0F467; color:#000050; padding:2px 8px; border-radius:12px; font-size:12px; font-weight:600; }
-  #emptyState { color:#000050; opacity:0.7; font-size:14px; padding:20px; text-align:center; }
+      .btn-primary {
+        background: var(--green);
+        color: var(--navy);
+      }
 
-  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,80,0.45); align-items:center; justify-content:center; z-index:50; }
-  .modal-overlay.open { display:flex; }
-  .modal-box { background:#FFFFFF; border-radius:10px; padding:22px; width:440px; box-shadow:0 8px 30px rgba(0,0,80,0.25); }
-  .modal-box label { display:block; font-size:12px; color:#000050; opacity:0.7; margin:12px 0 4px; text-transform:uppercase; letter-spacing:0.03em; }
-  .modal-box select, .modal-box input[type="text"] { width:100%; padding:9px; border:1px solid #000050; border-radius:6px; font-size:14px; color:#000050; }
-  .modal-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:18px; }
-  .status-msg { font-size:13px; margin-top:10px; color:#000050; }
-  .status-error { color:#000050; font-weight:700; }
-  .status-success { color:#000050; font-weight:700; }
-  .status-warning { color:#000050; font-weight:700; }
-  .badge { display:inline-block; background:#93DFE3; color:#000050; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600; margin-left:8px; }
-  #templateList { margin-top:10px; max-height:260px; overflow-y:auto; }
-  .template-row { display:flex; justify-content:space-between; align-items:center; padding:6px 8px; border-radius:6px; color:#000050; }
-  .template-row:hover { background:rgba(147,223,227,0.3); }
-  .template-row button { font-size:11px; padding:4px 8px; }
-  #folderInfo { font-size:12px; color:#000050; opacity:0.75; margin-top:6px; }
-</style>
-</head>
-<body>
+      .btn-primary:hover {
+        background: var(--navy);
+        color: var(--white);
+      }
 
-  <div class="brand-header">
-    <img id="companyLogo" src="https://www.datocms-assets.com/153350/1771875366-wppmedia_logo-white.svg?fm=webp&w=1080&q=100" alt="Firmenlogo">
-    <div id="brandWordmark">Out of Home EKE Tool</div>
-  </div>
+      .btn-secondary {
+        background: var(--white);
+        color: var(--navy);
+        border: 2px solid var(--navy);
+      }
 
-  <!-- CARD 1: Datei importieren -->
-  <div class="card">
-    <div class="row-flex" style="justify-content:space-between;">
-      <h2 id="uploadHeading">1. Datei importieren</h2>
-      <div class="row-flex">
-        <button class="btn-purple" id="chooseFolderBtn">📁 Vorlagenordner wählen</button>
-        <button class="btn-purple" id="saveTemplateBtn">💾 Vorlage speichern</button>
-        <button class="btn-purple" id="loadTemplateBtn">📂 Vorlage laden</button>
-      </div>
+      .btn-secondary:hover {
+        background: var(--turquoise);
+        color: var(--navy);
+      }
+
+      .btn-purple {
+        background: var(--navy);
+        color: var(--white);
+      }
+
+      .btn-purple:hover {
+        background: var(--turquoise);
+        color: var(--navy);
+      }
+
+      .btn-toggle {
+        background: var(--white);
+        color: var(--navy);
+        border: 2px solid var(--navy);
+      }
+
+      .btn-toggle.active {
+        background: var(--navy);
+        color: var(--green);
+        border-color: var(--navy);
+      }
+
+      .btn-toggle .toggle-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--turquoise);
+        margin-right: 6px;
+        vertical-align: middle;
+      }
+
+      .btn-toggle.active .toggle-dot {
+        background: var(--green);
+      }
+
+      .btn-success {
+        background: var(--green);
+        color: var(--navy);
+      }
+
+      .btn-success:hover {
+        background: var(--navy);
+        color: var(--green);
+      }
+
+      .btn-success:disabled,
+      .btn-primary:disabled,
+      .btn-secondary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      #dropZone {
+        border: 2px dashed var(--navy);
+        border-radius: 10px;
+        padding: 30px 20px;
+        text-align: center;
+        background: var(--white);
+        color: var(--navy);
+        cursor: pointer;
+        transition: 0.15s ease-in-out;
+      }
+
+      #dropZone.hover {
+        background: var(--green);
+        border-color: var(--navy);
+      }
+
+      #dropZone .dz-icon {
+        font-size: 32px;
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      #dropZone .dz-sub {
+        font-size: 12px;
+        color: var(--navy);
+        opacity: 0.65;
+        margin-top: 4px;
+        display: block;
+      }
+
+      #fileInput {
+        display: none;
+      }
+
+      #uploadIntro,
+      #folderInfo,
+      .opt-hint,
+      .status-msg {
+        font-size: 13px;
+        color: var(--navy);
+      }
+
+      #uploadIntro {
+        opacity: 0.75;
+        margin: 4px 0 14px;
+      }
+
+      #folderInfo {
+        margin-top: 6px;
+        opacity: 0.75;
+      }
+
+      .status-msg {
+        margin-top: 10px;
+        display: inline-block;
+      }
+
+      .status-success {
+        color: var(--navy);
+        font-weight: 700;
+      }
+
+      .status-error {
+        color: var(--navy);
+        font-weight: 700;
+      }
+
+      .status-warning {
+        color: var(--navy);
+        font-weight: 700;
+      }
+
+      #resultCard { display: none; }
+
+      #optionsBar { margin-bottom: 12px; }
+      #optionsBar .opt-hint { margin-top: 10px; }
+
+      .lang-switch {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        background: var(--white);
+        border: 2px solid var(--navy);
+        border-radius: 8px;
+        padding: 10px 14px;
+      }
+
+      .lang-switch label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--navy);
+        cursor: pointer;
+      }
+
+      .lang-switch input[type="radio"] {
+        accent-color: var(--navy);
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+      }
+
+      #columnDashboard,
+      #rawColumnDashboard {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--navy);
+        display: none;
+        max-height: 340px;
+        overflow-y: auto;
+      }
+
+      #columnDashboard.open,
+      #rawColumnDashboard.open {
+        display: block;
+      }
+
+      .checkbox-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(180px, 1fr));
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: var(--navy);
+      }
+
+      .dashboard-actions {
+        margin-top: 10px;
+        display: flex;
+        gap: 8px;
+      }
+
+      #tableWrapper {
+        overflow-x: auto;
+        margin-top: 14px;
+        border: 1px solid var(--navy);
+        border-radius: 8px;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 13px;
+        min-width: 700px;
+      }
+
+      thead th {
+        background: var(--navy);
+        color: var(--white);
+        padding: 10px 12px;
+        text-align: left;
+        white-space: nowrap;
+        position: sticky;
+        top: 0;
+      }
+
+      tbody td {
+        padding: 8px 12px;
+        border-bottom: 1px solid rgba(0, 0, 80, 0.15);
+        white-space: nowrap;
+        max-width: 280px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: var(--navy);
+      }
+
+      tbody tr:nth-child(even) {
+        background: rgba(147, 223, 227, 0.25);
+      }
+
+      tbody tr:hover {
+        background: rgba(176, 244, 103, 0.3);
+      }
+
+      tfoot td {
+        padding: 10px 12px;
+        white-space: nowrap;
+        background: var(--navy);
+        color: var(--white);
+        font-weight: 700;
+        border-top: 2px solid var(--navy);
+      }
+
+      .num-col {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+
+      #emptyState {
+        color: var(--navy);
+        opacity: 0.7;
+        font-size: 14px;
+        padding: 20px;
+        text-align: center;
+      }
+
+      .badge {
+        display: inline-block;
+        background: var(--turquoise);
+        color: var(--navy);
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 600;
+        margin-left: 8px;
+      }
+
+      .tag-inventory {
+        background: var(--turquoise);
+        color: var(--navy);
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .tag-sonstige {
+        background: var(--green);
+        color: var(--navy);
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 80, 0.45);
+        align-items: center;
+        justify-content: center;
+        z-index: 50;
+      }
+
+      .modal-overlay.open {
+        display: flex;
+      }
+
+      .modal-box {
+        background: var(--white);
+        border-radius: 10px;
+        padding: 22px;
+        width: 440px;
+        box-shadow: 0 8px 30px rgba(0, 0, 80, 0.25);
+      }
+
+      .modal-box label {
+        display: block;
+        font-size: 12px;
+        color: var(--navy);
+        opacity: 0.7;
+        margin: 12px 0 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+
+      .modal-box select,
+      .modal-box input[type="text"] {
+        width: 100%;
+        padding: 9px;
+        border: 1px solid var(--navy);
+        border-radius: 6px;
+        font-size: 14px;
+        color: var(--navy);
+      }
+
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="brand-header">
+      <img id="companyLogo" src="https://www.datocms-assets.com/153350/1771875366-wppmedia_logo-white.svg?fm=webp&w=1080&q=100" alt="Firmenlogo" />
+      <div id="brandWordmark">Out of Home EKE Tool</div>
     </div>
-    <p id="uploadIntro">Importiere ein EKE-Stov aus dem kManager</p>
-    <p id="folderInfo">Kein Vorlagenordner ausgewählt.</p>
-    <div id="dropZone">
-      <span class="dz-icon" id="dzIcon">📂</span>
-      <span id="dzText">EKE-Stov hier ablegen (Drag &amp; Drop) oder klicken, um eine Datei auszuwählen</span>
-      <span class="dz-sub" id="dzSub">.csv, .xlsx, .xls</span>
-      <input type="file" id="fileInput" accept=".csv,.xlsx,.xls">
-    </div>
-    <div class="row-flex">
-      <span id="fileStatus" class="status-msg"></span>
-    </div>
-  </div>
 
-  <!-- CARD 2: Kopfdaten (Bearbeitbare Felder) -->
-  <div class="card" id="kopfCard" style="display:none;">
-    <h2 id="kopfHeading">2. EKE Kopfdaten <span class="badge" id="kopfBadge">Konzern · Kunde · Kundenr · Kampagne · Agentur · Kampagnen-ID</span></h2>
-    <div id="kopfInfo"></div>
-  </div>
-
-  <!-- CARD 3: Aggregiertes Ergebnis & Optionen -->
-  <div class="card" id="resultCard" style="display:none;">
-    <div class="row-flex" style="justify-content:space-between; align-items:center; margin-bottom:12px;">
-      <h2 id="resultHeading">3. EKE Vorschau <span class="badge" id="rowCountBadge">0 Zeilen</span></h2>
-    </div>
-
-    <!-- Reihe mit allen Schaltern & Buttons in EINER Reihe -->
-    <div id="optionsBar">
-      <div class="row-flex" style="flex-wrap:wrap; gap:10px; align-items:center;">
-        <div class="lang-switch" id="langSwitch">
-          <label><input type="radio" name="langOption" value="de" id="langDe" checked=""> 🇩🇪 Deutsch</label>
-          <label><input type="radio" name="langOption" value="en" id="langEn"> 🇬🇧 Englisch</label>
+    <div class="card">
+      <div class="row-flex" style="justify-content: space-between;">
+        <h2>1. Datei importieren</h2>
+        <div class="row-flex">
+          <button class="btn-purple" id="chooseFolderBtn" type="button">📁 Vorlagenordner wählen</button>
+          <button class="btn-purple" id="saveTemplateBtn" type="button">💾 Vorlage speichern</button>
+          <button class="btn-purple" id="loadTemplateBtn" type="button">📂 Vorlage laden</button>
         </div>
-        <button class="btn-toggle" id="durchhangBtn"><span class="toggle-dot"></span>Durchhang entfernen</button>
-        <button class="btn-toggle" id="orteBtn"><span class="toggle-dot"></span>Orte zusammenfassen</button>
-        <button class="btn-secondary" id="toggleDashboardBtn">⚙️ EKE-Dashboard</button>
-        <button class="btn-secondary" id="toggleRawDashboardBtn">🗂️ STOV-Dashboard</button>
-        <button class="btn-secondary" id="kundenpreisBtn">💶 Kundenpreis definieren</button>
-        <button class="btn-success" id="exportExcelBtn">⬇️ EKE exportieren</button>
+      </div>
+      <p id="uploadIntro">Importiere ein EKE-Stov aus dem kManager</p>
+      <p id="folderInfo">Kein Vorlagenordner ausgewählt.</p>
+      <div id="dropZone">
+        <span class="dz-icon" id="dzIcon">📂</span>
+        <span id="dzText">EKE-Stov hier ablegen (Drag &amp; Drop) oder klicken, um eine Datei auszuwählen</span>
+        <span class="dz-sub" id="dzSub">.csv, .xlsx, .xls</span>
+        <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" />
+      </div>
+      <div class="row-flex">
+        <span id="fileStatus" class="status-msg"></span>
+      </div>
+    </div>
+
+    <div class="card" id="resultCard">
+      <div class="row-flex" style="justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h2>3. EKE Vorschau <span class="badge" id="rowCountBadge">0 Zeilen</span></h2>
       </div>
 
-      <!-- Hinweistext -->
-      <p class="opt-hint" id="optionsHint">„Durchhang entfernen" ignoriert alle Zeilen mit „D" in der Spalte Buchtyp. „Orte zusammenfassen" listet alle Orte je Medium in einer Zelle auf.</p>
-    </div>
-
-    <!-- Dashboards (ausklappbar) -->
-    <div id="columnDashboard">
-      <h3 id="dashboardHeading">EKE Spaltenauswahl</h3>
-      <div class="checkbox-grid" id="checkboxGrid"></div>
-    </div>
-
-    <div id="rawColumnDashboard">
-      <h3 id="rawDashboardHeading">STOV Spaltenauswahl (2. Reiter)</h3>
-      <p style="font-size:12px;color:#000050;opacity:0.7;margin-top:4px;">Wähle aus, welche der Original-Spalten aus den Rohdaten im zweiten Reiter des EKEs angezeigt werden sollen. Die Daten selbst bleiben unverändert.</p>
-      <div class="dashboard-actions">
-        <button class="btn-secondary" id="rawSelectAllBtn">Alle auswählen</button>
-        <button class="btn-secondary" id="rawSelectNoneBtn">Alle abwählen</button>
+      <div id="optionsBar">
+        <div class="row-flex" style="flex-wrap: wrap; gap: 10px; align-items: center;">
+          <div class="lang-switch" id="langSwitch">
+            <label><input type="radio" name="langOption" value="de" checked /> 🇩🇪 Deutsch</label>
+            <label><input type="radio" name="langOption" value="en" /> 🇬🇧 Englisch</label>
+          </div>
+          <button class="btn-toggle" id="durchhangBtn" type="button"><span class="toggle-dot"></span>Durchhang entfernen</button>
+          <button class="btn-toggle" id="orteBtn" type="button"><span class="toggle-dot"></span>Orte zusammenfassen</button>
+          <button class="btn-secondary" id="toggleDashboardBtn" type="button">⚙️ EKE-Dashboard</button>
+          <button class="btn-secondary" id="toggleRawDashboardBtn" type="button">🗂️ STOV-Dashboard</button>
+          <button class="btn-secondary" id="kundenpreisBtn" type="button">💶 Kundenpreis definieren</button>
+          <button class="btn-success" id="exportExcelBtn" type="button">⬇️ EKE exportieren</button>
+        </div>
+        <p class="opt-hint" id="optionsHint">„Durchhang entfernen“ ignoriert Zeilen mit „D“ im Buchtyp. „Orte zusammenfassen“ listet alle Orte je Medium in einer Zelle auf.</p>
       </div>
-      <div class="checkbox-grid" id="rawCheckboxGrid"></div>
+
+      <div id="columnDashboard">
+        <h3>EKE Spaltenauswahl</h3>
+        <div class="checkbox-grid" id="checkboxGrid"></div>
+      </div>
+
+      <div id="rawColumnDashboard">
+        <h3>STOV Spaltenauswahl (2. Reiter)</h3>
+        <p style="font-size:12px;color:#000050;opacity:0.7;margin-top:4px;">Wähle aus, welche Original-Spalten im zweiten Reiter des EKEs angezeigt werden.</p>
+        <div class="dashboard-actions">
+          <button class="btn-secondary" id="rawSelectAllBtn" type="button">Alle auswählen</button>
+          <button class="btn-secondary" id="rawSelectNoneBtn" type="button">Alle abwählen</button>
+        </div>
+        <div class="checkbox-grid" id="rawCheckboxGrid"></div>
+      </div>
+
+      <div id="tableWrapper">
+        <table id="resultTable">
+          <thead id="resultThead"></thead>
+          <tbody id="resultTbody"></tbody>
+          <tfoot id="resultTfoot"></tfoot>
+        </table>
+      </div>
     </div>
 
-    <!-- Vorschau-Tabelle -->
-    <div id="tableWrapper">
-      <table id="resultTable">
-        <thead id="resultThead"></thead>
-        <tbody id="resultTbody"></tbody>
-        <tfoot id="resultTfoot"></tfoot>
-      </table>
+    <div class="card" id="emptyStateCard">
+      <p id="emptyState">Noch keine Datei hochgeladen. Bitte lade eine Datei hoch, um mit der Aggregation zu beginnen.</p>
     </div>
-  </div>
 
-  <div class="card" id="emptyStateCard">
-    <p id="emptyState">Noch keine Datei hochgeladen. Bitte lade eine Datei hoch, um mit der Aggregation zu beginnen.</p>
-  </div>
-
-  <!-- Kundenpreis Modal -->
-  <div class="modal-overlay" id="kundenpreisModal">
-    <div class="modal-box">
-        <h3 id="modalHeading">Kundenpreis definieren</h3>
-        <p id="modalHint" style="font-size:13px;color:#000050;opacity:0.7;">
-          Definiere, wie sich der Kundenpreis zusammensetzt und generiere anschließend automatisch den Namen der neuen Spalte oder benenne sie selbst.
+    <div class="modal-overlay" id="kundenpreisModal">
+      <div class="modal-box">
+        <h3>Kundenpreis definieren</h3>
+        <p style="font-size:13px;color:#000050;opacity:0.7;">
+          Definiere die Kostenbasis und füge anschließend eine neue Spalte hinzu.
         </p>
 
-        <!-- Spalte A (Basiswert) -->
         <label for="selectColA">Wähle die Kostenbasis</label>
         <select id="selectColA">
           <option value="__none__">Keine</option>
@@ -222,1913 +527,651 @@
           <option value="Netto/Netto">Netto/Netto</option>
           <option value="Netto/Netto/Netto">Netto/Netto/Netto</option>
           <option value="Netto/Netto/Netto/Netto">Netto/Netto/Netto/Netto</option>
-          <option value="custom_1790249893526">NN SMV AH</option>
         </select>
 
-        <!-- Spalte B (+/-) -->
         <label for="selectColB">Wähle ein Element (+ / -)</label>
         <select id="selectColB">
           <option value="__none__">Keine</option>
           <option value="SMV">SMV</option>
           <option value="Agenturhonorar">Agenturhonorar</option>
-          <option value="custom_1790249893526">NN SMV AH</option>
         </select>
 
-        <!-- Spalte C (+/-) -->
         <label for="selectColC">Wähle ein Element (+ / -)</label>
         <select id="selectColC">
           <option value="__none__">Keine</option>
           <option value="SMV">SMV</option>
           <option value="Agenturhonorar">Agenturhonorar</option>
-          <option value="custom_1790249893526">NN SMV AH</option>
         </select>
 
-        <!-- Name für neue Spalte mit Auto-Name Button -->
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; margin-bottom:4px;">
           <label for="newColName" style="margin:0;">Name der neuen Spalte</label>
-          <button type="button" id="autoNameBtn" class="btn-secondary" style="font-size:11px; padding:3px 8px; cursor:pointer;">
-            ✨ Name automatisch generieren
-          </button>
+          <button type="button" id="autoNameBtn" class="btn-secondary" style="font-size:11px; padding:3px 8px;">✨ Name automatisch generieren</button>
         </div>
-        <input type="text" id="newColName" placeholder="z.B. Kundenpreis KN2+AH">
+        <input type="text" id="newColName" placeholder="z.B. Kundenpreis KN2+AH" />
 
         <div class="modal-actions" style="margin-top:15px;">
-          <button class="btn-secondary" id="modalCancelBtn">Abbrechen</button>
-          <button class="btn-primary" id="modalAddBtn">Hinzufügen</button>
+          <button class="btn-secondary" id="modalCancelBtn" type="button">Abbrechen</button>
+          <button class="btn-primary" id="modalAddBtn" type="button">Hinzufügen</button>
         </div>
         <div id="modalStatus" class="status-msg"></div>
-    </div>
-  </div>
-
-  <!-- Vorlage speichern Modal -->
-  <div class="modal-overlay" id="saveTemplateModal">
-    <div class="modal-box">
-      <h3 id="saveTemplateHeading">Vorlage speichern</h3>
-      <p style="font-size:13px;color:#000050;opacity:0.7;">Speichert Spaltenauswahl, Optionen (Durchhang/Orte), Kundenpreis-Definitionen, Rohdaten-Spaltenauswahl und die Sprachauswahl als Datei im gewählten Vorlagenordner.</p>
-      <label for="templateNameInput">Name der Vorlage</label>
-      <input type="text" id="templateNameInput" placeholder="z.B. Standard-Auswertung">
-      <div class="modal-actions">
-        <button class="btn-secondary" id="saveTemplateCancelBtn">Abbrechen</button>
-        <button class="btn-primary" id="saveTemplateConfirmBtn">Speichern</button>
       </div>
-      <div id="saveTemplateStatus" class="status-msg"></div>
     </div>
-  </div>
 
-  <!-- Vorlage laden Modal -->
-  <div class="modal-overlay" id="loadTemplateModal">
-    <div class="modal-box">
-      <h3 id="loadTemplateHeading">Vorlage laden</h3>
-      <p style="font-size:13px;color:#000050;opacity:0.7;">Vorlagen aus dem gewählten Ordner:</p>
-      <div id="templateList"></div>
-      <div class="modal-actions">
-        <button class="btn-secondary" id="loadTemplateCancelBtn">Schließen</button>
-      </div>
-      <div id="loadTemplateStatus" class="status-msg"></div>
-    </div>
-  </div>
-
-
-
-
-</body></html>
-
-<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
-<script>
-(function(){
-
-  /* ================================================================================
-     ✏️  BEARBEITBARER BEREICH — HIER DEINE MEDIUM-MAPPING-LISTE PER COPY & PASTE EINFÜGEN
-     ================================================================================
-     Format je Zeile:   ABKÜRZUNG;Deutscher Begriff;Englischer Begriff
-     Trennzeichen:       Semikolon ( ; )
-     Der ENGLISCHE Begriff (3. Spalte) ist OPTIONAL. Fehlt er, wird für die englische
-     Ansicht automatisch der deutsche Begriff als Fallback verwendet.
-     Beispiel: GFBX;Großflächen;Billboard
-
-     WICHTIG: Mehrere Abkürzungen dürfen denselben DEUTSCHEN Begriff haben
-     (z.B. "GFST;Großfläche;Billboard" und "GFBF;Großfläche;Billboard"). Das Tool
-     gruppiert IMMER stabil anhand des DEUTSCHEN Begriffs (damit sich die Gruppen
-     beim Sprachwechsel nicht ändern) und wählt für die Anzeige in Tabelle und Export
-     je nach aktiver Sprache (Radio-Button unter "Verarbeitungsoptionen") automatisch
-     den deutschen ODER den englischen Begriff der jeweiligen Gruppe aus.
-  ================================================================================ */
-  var RAW_MAPPING_DATA = `
-AM;Ambient Werbemedien;Ambient Medium
-AMA0;A0-Rahmen;DIN A0 Frame Poster
-AMA1;A1-Rahmen;DIN A1 Frame Poster
-AMA2;DIN A2 Plakate;DIN A2 Poster
-AMA3;DIN A3 Plakate;DIN A3 Poster
-AMAF;amber FLOWER;amber FLOWER
-AMAR;DIN A2 Rahmen;DIN A2 Framed Poster
-AMAS;AmberStix ;AmberStix 
-AMAZ;Abrisszettel;Tear Off Note
-AMBA;Banner;Banner
-AMBB;Bike Boards;Bike Boards
-AMBC;Bike Cards;Bike Cards
-AMBD;Bierdeckel;Coaster
-AMBE;Bike Caps;Bike Caps
-AMBI;Baustellen-Infotafel;Consruction Site Poster
-AMBL;Backlight;Backlight
-AMBM;Beamer Man;Beamer Man
-AMBO;Balloon Walke;Balloon Walker
-AMBR;Medien in Bars;Bar Advertisement
-AMBT;Brötchentüten;Bakery Bag
-AMBU;Freecards ButlersCard;Freecards ButlersCard
-AMBW;Brandwand;Firepreventionwall
-AMCA;CartBoards;CartBoards
-AMCB;College Banner;College Banner
-AMCC;Freecards College Cards;Freecards College
-AMCG;Campus-Lights;Campus Lights
-AMCI;Freecards Cinema Cards;Freecards Cinema
-AMCL;Cinema Lights;Cinema Lights
-AMCM;CLP Mover;CLP Mover
-AMCO;Colorama;Colorama
-AMCP;CLP an Unis;Campus CLP
-AMCT;Campus-Tüten;Campus Bag
-AMCU;City Cube;City Cube
-AMCX;Freecards Citycards;Freecards Citycards
-AMD0;DIN A0;DIN A0
-AMD1;DIN A1 Plakate;DINA 1 Poster
-AMDA;Display-Ads;Display-Ads
-AMDB;Dressboxxen;Dressbox
-AMDC;Doorcards/Hangcards;Doorcards
-AMDD;Door Media;Door Media
-AMDL;Disco Lights;Disco Lights
-AMDM;Disco Mirrors ;Disco Mirrors 
-AMDS;Drohnenshow;Drone Show
-AMEB;LED Bikes;LED Bikes
-AMEC;Freecards Edgar Cards;Freecards Edgar Cards
-AMFA;Flyerauslagen;Flyer lay out
-AMFG;Floorgraphics ;Floorgraphics 
-AMFI;Fillboards;Fillboards
-AMFL;Aktionsfläche;Promotion Point
-AMFN;Faltstadtplan;City Map
-AMFO;FotoBox;FotoBox
-AMFP;Flächenplakatierung;Poster Wall
-AMFS;Fitnesstudio;Gym
-AMFT;Medien in Foodtrucks;Food Truck Mediums
-AMGA;GastroLights;GastroLights
-AMGG;Flaggen;Flags
-AMGU;Großfläche an Uni;Billboard Campus
-AMHP;Hohlkammerplakate;Hollow Chamber Posters
-AMHS;Hotelsampling;Sampling Hotel
-AMHW;Hinweismedien;Sing Medium
-AMIN;Infomodul;Info Station
-AMIR;Instore Radio;Instore Radio
-AMKS;Kreide Stencils;Chalk Graffiti
-AMLA;Lift Ad / Fahrstuhlbranding;Lift Ad
-AMLS;Leuchtdrehsäule;Illuminated spinning Pillar
-AMMA;Marktforschung;Research
-AMMB;Moskitos Basic;Framed Poster "Moskito"
-AMMC;Moskitos;Poster Frames - Moskito
-AMMF;MegaFlags;MegaFlags
-AMMM;Moskitos Complete;Moscito Complete
-AMMO;Mobile Großflächen;Mobile Billboard
-AMMP;MegaAirPoster;MegaAirPoster
-AMMU;Mural;Mural
-AMNY;NewYorker;NewYorker
-AMPG;Playground Poster;Playground Poster
-AMPH;Parkhausschranken;Car Park Barrier
-AMPI;Pizzakartons ;Pizza Box
-AMPL;PlusPeter;PlusPeter
-AMPO;Promotion;Promotion
-AMPP;Standees / Pappaufsteller;Standee
-AMPT;Parkticket;Parking Ticket Branding
-AMRA;RollAd ;RollAd 
-AMRB;Rolltreppenbranding;Escalator Branding
-AMRC;Car Cards;Car Cards
-AMRH;Reiseunterlagenhüllen;Travel Document Branding
-AMRM;RoofMedia;RoofMedia
-AMRR;Rolltreppenrahmen;Escalator Frames
-AMRS;Reversed Stencils;Reversed Stencils
-AMRT;CLP an Autobahnraststätten;CLP Motorway Rest Areas
-AMSA;Spiegelaufkleber;Mirror Ad
-AMSB;Stretch Board;Stretch Board
-AMSC;Schoolposter ;Schoolposter 
-AMSD;Spindwerbung u.a. Schwimmbäder u Fitness;Locker Ad
-AMSF;Streetfence;Streetfence
-AMSG;Stair Graphics;Stair Graphics
-AMSH;Schulhefte;Exercise Book
-AMSI;Medien in Skigebieten;Ski Area Advertisement
-AMSK;Sky Poster;Sky Poster
-AMSL;Station Light;Station Light
-AMSM;Sampling;Sampling
-AMSN;Spannbänder;Strap Banner
-AMSO;Freecards Schoolcards;Freecard - School
-AMSP;Sponsoring;Sponsoring
-AMSR;Stair Poster;Stair Poster
-AMST;Stair Branding;Stair Branding
-AMSU;Studies;Studies
-AMSX;Stixx;Stixx
-AMTB;TravelBoard;Travel Board
-AMTC;Teppich;Carpet
-AMTF;Bauzaun/Townfence;Town Fence
-AMTG;Coffee-to-go-Becher;Coffe to Go Cup
-AMTL;Trendlights;Trendlights
-AMTO;Stromkästen/Townboards;Power Box Branding
-AMTP;Toilettenplakate;Toilette Poster
-AMTR;Train Light Poster;Train Light Poster
-AMTT;Tablettwerbung ;Tablett Advertisement
-AMTU;Treppenaufgang;Stair Case
-AMTW;TownWall;TownWall
-AMTX;Taxiwerbung;Taxi Advertisement
-AMUH;Uhrenwerbung;Clock Ad
-AMUP;Unterwasserplakate;Underwater Poster
-AMVA;Veranstaltungsgruppe;Event Group
-AMVT;Velotaxen/Fahrradtaxi;Velotaxi
-AMWB;Walking Banner / Running Banner;Walking Banner
-AMWH;Ganzbeklebung Wartehallen;Shelter Branding
-AMWM;SandwichMan;SandwichMan
-AMWP;Wildplakatierung;Wild Postering
-AMWT;Werbeturm ;AdTower
-AMXL;Campus-Poster XL;Campus-Poster XL
-AMZE;Zebrating;Zebrating
-AMZP;Zeppelin;Zeppelin
-MO;Mobile Medien;Movable Advertsing
-MOAB;Mobile Medien Air Banner;Air Banner
-MOAT;Mobile Medien ApeTrailer;ApeTrailer
-MOCB;CoolLiteBikes;CoolLiteBikes
-MOCT;Mobile Medien Coollite-Trucks;Cool Lite Truck
-MOLR;Mobile Medien LitoTrailer;Lito Trailer
-MOLT;Mobile Medien LitoFahrzeuge;Lito Vehicle
-MOPS;Mobile Medien - Promo Scooter;Promo Scooter
-AL;Allgemeinstelle;Pillar
-ALBF;Allgemeinstelle - Bahnhof;Bill Posting Station
-ALBS;Allgemeinstelle - S-Bahn;Bill Posting Tram Stations
-ALBU;Allgemeinstelle - U-Bahn;Bill Posting - Subway
-ALBX;Allgemeinstelle - Bahn-Sonstige;Bill Posting - Station
-ALKU;Allgemeinstelle - Kultursäulen;General Distribution
-ALPP;Allgemeinstelle - Parkplatz;General Distribution - Parking
-ALST;Allgemeinstelle - Standard;General Distribution
-ALWH;Allgemeinstelle - Wartehalle;Bill Posting - shelters
-ALWR;Allgemeinstelle - Wechselrahmen;Bill Posting - Frames
-ALZZ;Allgemeinstelle - keine Zuordnung;Bill Posting
-AMKU;Kultursäulen;Culture Column
-AMSZ;Szenerahmen;Framed Poster "Scene"
-BF;Bahnhofsmedien;Station Media
-BFBA;Bahnhof Spannbänder;Station Banner
-BFBB;Bahnhof Big Banner;Big Banner Station
-BFBÜ;Brückenbanner;Bridge Banner
-BFFS;Bahnhof Folienspecial;Station Foil Wrap
-BFGP;Groundposter;Groundposter
-BFHW;Bahnhof Hinweisschilder;Station Signs
-BFIF;Individualfläche;Individual Execution
-BFPB;Prellbock;Bumper
-BFPG;Poster Gallery;Poster Gallery
-BFSB;Sitzbank;Bench
-BFST;Station Tower;Station Tower
-BFTR;Traverse;Traverse
-BFTS;Tafelstapel;Boardstack
-BFVI;Vitrine;Display Case
-BFWG;Wandgestaltung;Wall Wrap
-CP;CityStar Plus;CityStar Plus
-CPST;CityStar Plus - Standard;CityStar Plus - Standard
-FG;Flughafenwerbung;Airport Advertising
-FGAG;Flughafen AD Gate Abflugbereich;Airport  AdGate
-FGAP;Flughafen Abflugspackage TXL M;Airport Departure Package
-FGAR;Flughafen Access Road Cover Package;Airport Access Road Cover Package
-FGBA;Flughafen Banner;Airport Banner
-FGBL;Flughafen Balustrade Ankunft;Airport  Ballustrade
-FGBM;Flughafen Boardmagazine;Airport Magazine
-FGCB;Flughafen Cross Banner;Airport  Cross Banner
-FGCO;Flughafen Colorama;Airport Colorama
-FGCS;Flughafenwerbung - CLP SiKo;Airport CLP
-FGCV;Flughafen Colorama 4/1;Airport  Colorama
-FGED;Flughafen Exit Doors;Airport Exit Doors
-FGFB;Flughafen Werbetafeln Fluggastbrücken;Airport Passenger Bridges
-FGFF;Flughafen Flugzeugbranding;Airport Plane Branding
-FGGB;Flughafen Gepäckband;Airport Baggage Claim
-FGHB;Check-In Boardkarten;Check In Boad Tickets
-FGHR;Flughafen Headrestcover;Airport Headrestcover
-FGKS;Flughafen King Size Lightbox;Airport  King Size Lightbox
-FGKT;Flughafen Koffertrollies;Airport Trolley
-FGLD;Flughafen Light Display XXL;Airport Light Display XXL
-FGLE;Flughafen Leuchtkasten Nr. 37;Airport Lightbox 37
-FGLF;Flughafen Leuchtfläche Size XL;Airport Lightbox XL
-FGLK;Flughafen Leuchtkasten;Airport Lightbox
-FGLN;Flughafen Leuchtkasten Megasize;Airport  Lightbox Megasite
-FGLP;Flughafen Leuchtkasten (doppelseitig);Airport Lightbox - double sided
-FGLR;Flughafen Lightbox Treppenabgang Richtung Car Rental;Airport Lightbox - Stairway direction car rental
-FGLS;Flughafen Leuchtkasten am Laufband Süd;Airport Lightbox Babbage Claim
-FGLT;Flughafen Leuchtkasten Nr. 38;Airport  Lightbox 38
-FGLU;Flughafen Leuchtkasten 1st class Lounge;Airport Lightbox 1st Class Lounge
-FGMA;Flughafen Monitore Aufzüge;Airport  Screen Elevator
-FGMB;Flughafen Mobile Banner;Airport  Mobile Banner
-FGMF;Flughafen Medienfassade;Airport Media Fassade
-FGMG;Flughafen Megaposter;Airport Megaposter
-FGMP;Flughafen Magnis Panels;Airport Magnis Panels
-FGOP;Flughafen Outdoor Portal;Airport Outdoor Portal
-FGPB;Flughafen  Curbside Panels Terminal Building;Airport  Curbside Panels Terminal Building
-FGPP;Flughafen Promotion;Airport Promotion
-FGPR;Flughafen Medien - Premium Posterline;Airport Premium Posterline
-FGPW;Flughafen Platinium Wall;Airport Platinium Wall
-FGSD;Flughafen Spanndia Nr. 54;Airport Stretch Dia 54
-FGSK;Flughafen Sitzkristall;Airport Seating Crystal
-FGSN;Flughafen Spanndia;Airport Clamping Dis
-FGSP;Flughafen Sky Poster;Airport Sky Poster
-FGST;Flughafen Schiebetüren;Airport Doors
-FGSW;Flughafen 3 er Säulen Wrap;Airport 3 Pillar Wrap
-FGTB;Flugzeug Tischwerbung;Plane Table Branding
-FGTP;Flughafen Berlin Tegel Panoramafläche;Airport Berlin Tegel Panorama Site
-FGWB;Flughafen Welcome Branding;Airport Welcome Branding
-FGWD;Flughafen Wallbranding / Sperrgepäckwand;Airport Wall Branding
-FGWH;Flughafen Wheel A;Airport Wheel A
-FGWP;Flughafen Wall Panel;Airport Wall Panel
-FGWW;Flughafen WallWraps;Airport WallWraps
-GF;Großflächen;Billboard
-GFBF;Großflächen;Billboard
-GFBS;Großflächen;Billboard
-GFBU;Großflächen;Billboard
-GFBX;Großflächen;Billboard
-GFCI;Großflächen;Billboard
-GFCP;Großflächen;Billboard
-GFED;Großflächen;Billboard
-GFEK;Großflächen;Billboard
-GFES;Großflächen;Billboard
-GFFH;Großflächen;Billboard
-GFPB;Großflächen;Billboard
-GFPH;Großflächen;Billboard
-GFPP;Großflächen;Billboard
-GFQA;Großflächen;Billboard
-GFSB;Großflächen;Billboard
-GFSD;Großflächen;Billboard
-GFSE;Großflächen;Billboard
-GFSP;Großflächen;Billboard
-GFST;Großflächen;Billboard
-GFTC;Großflächen;Billboard
-GFTE;Großflächen;Billboard
-GFTQ;Großflächen;Billboard
-GFVB;Großflächen;Billboard
-GFWH;Großflächen;Billboard
-GV;City Light Board/ Mega Light;City Light Board/ Mega Light
-GVBF;City Light Board/ Mega Light;City Light Board/ Mega Light
-GVBS;City Light Board/ Mega Light;City Light Board/ Mega Light
-GVBU;City Light Board/ Mega Light;City Light Board/ Mega Light
-GVBX;City Light Board/ Mega Light;City Light Board/ Mega Light
-GVEK;City Light Board/ Mega Light;City Light Board/ Mega Light
-GVFH;City Light Board/ Mega Light;City Light Board/ Mega Light
-GVPH;City Light Board/ Mega Light;City Light Board/ Mega Light
-GVPO;City Light Board/ Mega Light;City Light Board/ Mega Light
-GVPP;City Light Board/ Mega Light;City Light Board/ Mega Light
-GVQA;City Light Board/ Mega Light;City Light Board/ Mega Light
-GVSL;City Light Board/ Mega Light Select;City Light Board/ Mega Light Select
-GVST;City Light Board/ Mega Light;City Light Board/ Mega Light
-GVWH;City Light Board/ Mega Light;City Light Board/ Mega Light
-GZ;Ganzstelle;Column
-GZBF;Ganzstelle;Column
-GZBS;Ganzstelle;Column
-GZBU;Ganzstelle;Column
-GZBX;Ganzstelle;Column
-GZEK;Ganzstelle;Column
-GZHS;Ganzstelle;Column
-GZPH;Ganzstelle;Column
-GZPP;Ganzstelle;Column
-GZST;Ganzstelle;Column
-GZZZ;Ganzstelle;Column
-HD;Haushaltsdirektverteilung;Direct Distribution
-K4ST;Kleinflächen (4/1) - Standard;Poster 4/1
-K6ST;Kleinflächen (6/1) - Standard;Poster 6/1
-ME;Messemedien;Exhibition Media
-MEBA;Banner Messewerbung;Exhibition Media - Banner
-MEBB;Billboard Messe;Billboard- Exhibition
-MESB;Slim Boxes;Slim Boxes
-MEWT;Werbeturm Messe;Ad Tower
-ON;Online;Online
-PF;Panoramaflächen (36/1) - Parkplatz;Panorama Sites 36/1
-PFBF;Panoramaflächen (36/1) - Bahnhof;Panorama Site 36/1 -  Station
-PFBX;Panoramaflächen (36/1) - Bahn-Sonstige;Panorama Site 36/1 -  Station divers
-PFEK;Panoramaflächen (36/1) - EKZ;Panorama Site 36/1 - Supermarket
-PFES;Panoramaflächen (36/1) - EKZ, die als Standardstellen wirken;Panorama Site 36/1 - Supermarket
-PFFH;Panoramaflächen (36/1) - Flughafen;Panorama Site 36/1 - Airport
-PFPH;Panoramaflächen (36/1) - Parkhaus;Panorama Site 36/1 - Parking Garage
-PFPO;Panoramaflächen (36/1) - Point of Sale (auch Kino);Panorama Site 36/1 - POS
-PFSE;Panoramaflächen (36/1) - Standard, die auf EKZ-Märkte wirken;Panorama Site 36/1
-PFST;Panoramaflächen (36/1) - Standard;Panorama Site 36/1
-PN;Print;Print
-RA;Radio;Radio
-RP;Riesenposter;Giant Poster
-RPCT;RP/CT;Giant Poster
-RPFB;RP/FB;Giant Poster
-RPST;RP/ST;Giant Poster
-RPZZ;RP/ZZ;Giant Poster
-SG;Sondergroßflächen;Billboard Special
-SGST;Sondergroßflächen;Special Billboards
-SO;Sonstiges;Miscellaneous
-SOCP;City Points;Miscellaneous - City Points
-SOG8;Ganzstelle 8/1 (hinterleuchtet);Miscellaneous - Pillar 8/1
-SOGL;CityLight Säule;Backlit Pillar
-SOS4;Sonderstelle 4/1 (Säule);Pillar 4/1
-SOSL;StretchSäule (hinterleuchtet);Stretch Pillar backlit
-SOTG;Großfläche - Temporär;Temporary Billboard
-SOUS;Uhrensäulen;Miscellaneous -  ClockPillar
-SPST;Superposter Standard;Superposter
-TV;TV;TV
-VI;City Light Poster;City Light Poster
-VIBF;City Light Poster;City Light Poster
-VIBS;City Light Poster;City Light Poster
-VIBU;City Light Poster;City Light Poster
-VIBX;City Light Poster;City Light Poster
-VIEK;City Light Poster;City Light Poster
-VIFH;City Light Poster;City Light Poster
-VIIN;City Light Poster;City Light Poster
-VIPH;City Light Poster;City Light Poster
-VIPO;City Light Poster;City Light Poster
-VIPP;City Light Poster;City Light Poster
-VIPR;City Light Poster;City Light Poster
-VIST;City Light Poster;City Light Poster
-VIWH;City Light Poster;City Light Poster
-VIZZ;City Light Poster;City Light Poster
-VW;Verkehrsmittelwerbung;Advertising in Public Transportation
-VWBS;Ganzgestaltung Bus;Full Bus Wrap
-VWDF;Deckenflächen;Public Transportation Ceiling Sites
-VWGN;Ganzgestaltung Straßenbahn;Full Tram Wrap
-VWGS;Ganzgestaltung S-Bahn;Full Tram Wrap
-VWGU;Ganzgestaltung U-Bahn;Full Subway Wrap
-VWIP;Innenplakate;Indoor Posters
-VWLB;LKW Branding;Truck Branding
-VWLW;Leuchtwerbeanlage;Illuminated Site
-VWSA;Schwebebahn;Suspension Railway
-VWSC;Swing Cards;Swing Cards
-VWSP;Seitenscheibenplakate;Window Ad
-VWTB;LKW Traffic Board;Traffic Board
-VWTN;Teilgestaltung Straßenbahn;Partial Wrap Tram
-VWTR;TrainPoster;TrainPoster
-VWTS;Teilgestaltung S-Bahn;Partial Wrap Tram
-VWTT;Teilgestaltung Bus;Partial Wrap Bus
-VWTU;Teilgestaltung U-Bahn;Partial Wrap Subway
-EM;Elektronische Medien;Electronic Medium
-EMAC;Autobahn Channel;Motorways Channel
-EMAD;adWalk;adWalk
-EMAM;Ambient TV;Ambient TV
-EMAT;Active TV;Active TV
-EMAV;Apotheken TV;Pharmacie TV
-EMBA;Digitale Banner;Digital Banner
-EMCA;Campus-TV ;Campus-TV 
-EMCC;Cinema Channel;Cinema Channel
-EMCH;Fitness;Fitness
-EMCI;Public Video City;Public Video City
-EMCT;Cinema;Cinema
-EMCW;Co-Working;Co-Working
-EMDB;Digitaler Bahnhof Friedrichstrasse, Berlin;Digital Train Station Friedrichstraße
-EMDC;EMDC – Digital Motion Cube;EMDC – Digital Motion Cube
-EMDD;3D Umsetzung Digitale Medien;3D Implementation Digital Media
-EMDL;Elektronische Medien DigiLights;DigiLights
-EMDO;DOOH;DOOH
-EMDT;DTB;DTB
-EMET;Edeka TV;Edeka TV
-EMFG;Fahrgast TV;Passenger TV
-EMGA;Gastro Channel;Gastromomy Channel
-EMGI;Public Video Giant Indoor;Public Video Giant Indoor
-EMGN;Public Video Giant;Public Video Giant
-"EMGO;Public Video Giant Outdoor;	Public Video Giant Outdoor"
-EMGW;Public Video Giant Indoor - The Whale;Public Video Giant Indoor - The Whale
-EMIS;Infoscreen;Infoscreen
-EMLH;LEH Eingangsstele;LEH Entrance Stele
-EMLI;LEH Instore Screen;LEH Instore Screen
-EMMC;Mall Channel;Mall Channel
-EMMF;Medienfassade Hamburg;Medienfassade Hamburg
-EMMN;Mailing / Newsletter;Mailing / Newsletter
-EMMP;Mobile Projektion;Mobile Projection
-EMMT;Digital Motion Tower;Digital Motion Tower
-EMMV;Mall Video;Mall Video
-EMNW;Video Newswall;Video Newswall
-EMPG;EMPG – Postergalerie;EMPG – Postergallery
-EMPL;Digital Premium Lounge Network;Digital Premium Lounge Network
-EMPT;Poster TV;Poster TV
-EMRN;Public Video Run of Network;Public Video Run of Network
-EMRP;Elektronisches Riesenposter;Digital Giant Poster
-EMRS;Public Video Roadside;Public Video Roadside
-EMRT;Public Video Retail;Public Video Retail
-EMSC;Screens;Screens
-EMSH;Digitale Screens Shopping Center;Digitale Screens Shopping Center
-EMSM;Supermotion;Supermotion
-EMSN;Public Video Scene;Public Video Scene
-EMSO;Share Now;Share Now
-EMSS;Station Video Select;Station Video Select
-EMST;Station TV;Station TV
-EMSV;Station Video;Station Video
-EMTC;Public Video City Tower;Public Video City Tower
-EMTV;Mc Donald + Burger King TV;Mc Donald + Burger King TV
-EMTX;Taxiwerbung digital;Digital Taxi Ad
-EMUP;Uber Platz;Uber Place
-EMVB;Videoboards;Videoboards
-EMWS;Welcome Screen;Welcome Screen
-FD;Flags Digital;Flags Digital
-FDST;Flags Digital - Standard;Flags Digital - Standard
-FGAC;Flughafen AdBoard;Airport AdBoard
-FGAD;Flughafen Ad-e-Motion;Airport Ad-e-Motion
-FGBS;Flughafen Digital Brand Space;Airport Digital Brand Space
-FGCN;Flughafen Digital Coverage Network;Airport Digital Coverage Network
-FGDB;Digital Business Network Plus;Digital Business Network Plus
-FGDN;Flughafen Digital Network;Airport Digital Network
-FGDS;Flughafen Digitale Screens;Airport Digital Screens
-FGEB;Flughafen digital Baggage Claim Domination;Airport  Digital Baggage Claim
-FGEV;Flughafen Digital Vitrinen;Airport Digital Vitrines
-FGFI;Flughafen Flight Information Media;Airport Flight Information Media
-FGGN;Flughafen Digital Giants;Airport Digital Giants
-FGGW;Flughafen Gallery Walk;Airport Gallery Walk
-FGMD;Flughafen LED Motion Drive;Airport  LED Motion Drive
-FGMT;Flughafen MetaTwistTower;Airport MetaTwistTower
-FGNW;Flughafen Digital Premium Network;Airport Digital Premium Network
-FGRS;Flughafen Digital Roadshow;Airport Digital Roadshow
-FGSS;Flughafen Sequential Digital Video Strip;Airport Sequential Digital Video Strip
-FGVB;Flughafen Videoboards;Airport Videoboards
-FGVW;Flughafen Videowall;Airport VideoWall
-GD;Digital City Light Board/ Digital Mega Light;Digital City Light Board/ Digital Mega Light
-GDBF;Digital City Light Board/ Digital Mega Light;Digital City Light Board/ Digital Mega Light
-GDBS;Digital City Light Board/ Digital Mega Light;Digital City Light Board/ Digital Mega Light
-GDBU;Digital City Light Board/ Digital Mega Light;Digital City Light Board/ Digital Mega Light
-GDBX;Digital City Light Board/ Digital Mega Light;Digital City Light Board/ Digital Mega Light
-GDEK;Digital City Light Board/ Digital Mega Light;Digital City Light Board/ Digital Mega Light
-GDFH;Digital City Light Board/ Digital Mega Light;Digital City Light Board/ Digital Mega Light
-GDPH;Digital City Light Board/ Digital Mega Light;Digital City Light Board/ Digital Mega Light
-GDPO;Digital City Light Board/ Digital Mega Light;Digital City Light Board/ Digital Mega Light
-GDPP;Digital City Light Board/ Digital Mega Light;Digital City Light Board/ Digital Mega Light
-GDQA;Digital City Light Board/ Digital Mega Light;Digital City Light Board/ Digital Mega Light
-GDST;Digital City Light Board/ Digital Mega Light;Digital City Light Board/ Digital Mega Light
-GDWH;Digital City Light Board/ Digital Mega Light;Digital City Light Board/ Digital Mega Light
-KD;Kleinfläche Digital;Small digital space
-KDST;Kleinfläche Digital - Standard;Small digital space
-MEVW;Videowalls Messe;Videowall Exhibition
-PHXX;Parkhaus CLP-Vitrine;Parkspace CLP
-PM;Programmatic;Programmatic
-PMAC;Programmatic Airport Channel;Programmatic Airport Channel
-PMAD;WPP Advanced DOOH;WPP Advanced DOOH
-PMAU;Programmatic Audio;Programmatic Audio
-PMBC;Programmatic Autobahn Channel;Programmatic Motorway Channel
-PMBG;Programmatic Bürogebäude;Programmatic Office Buildings
-PMBK;Programmatic Burger King;Programmatic Burger King
-PMCB;Programmatic City Light Board DCLB;Programmatic City Light Board DCLB
-PMCI;Programmatic City;Programmatic City
-PMCN;Programmatic City Network;Programmatic City Network
-PMCP;Programmatic DCLP City Plus;Programmatic DCLP City Plus
-PMCS;Programmatic City Screens;Programmatic City Screens
-PMCV;Programmatic City Video;Programmatic City Video
-PMCW;Programmatic Co-Working;Programmatic Co-Working
-PMDB;Programmatic DUB;Programmatic DUB
-PMDC;Programmatic Doorshow Channel;Programmatic Doorshow Channel
-PMDM;Programmatic DCLP München;Programmatic DCLP Munich
-PMEO;Programmatic Elevator Office;Programmatic Elevator Office
-PMFD;Programmatic Flughafen Düsseldorf;Programmatic Airport Düsseldorf
-PMFS;Programmatic Fitnesstudios;Programmatic Fitness
-PMGI;Programmatic Public Video Giant Indoor;Programmatic Public Video Giant Indoor
-PMGM;GroupM PD OoH Package;GroupM PD OoH Package
-PMGO;Programmatic Public Video Giant Outdoor;Programmatic Public Video Giant Outdoor
-PMHT;Programmatic Hotel;Programmatic Hotel
-PMIS;Programmatic Infoscreen;Programmatic Infoscreen
-PMKC;Programmatic KING Channel;Programmatic KING Channel
-PMLH;Programmatic LEH;Programmatic Retail
-PMMC;Programmatic Mall Channel;Programmatic Mall Channel
-PMMV;Programmatic MallVideo;Programmatic MallVideo
-PMOF;Programmatic Office;Programmatic Office
-PMPG;Programmatic Postergalerie;Programmatic Postergallery
-PMPM;Programmatic Premium;Programmatic Premium
-PMPN;Programmatic Premium Network;Programmatic Premium Network
-PMPO;Programmatic POS;Programmatic POS
-PMRS;Programmatic Road Side Screens;Programmatic Road Side Screens
-PMSC;Programmatic Public Video Scene;Programmatic Public Video Scene
-PMSN;Programmatic Share Now;Programmatic Share Now
-PMSV;Programmatic Station Video;Programmatic Station Video
-PMTC;Programmatic City Tower;Programmatic City Tower
-PMTS;Programmatic Tankstelle;Programmatic Gas Station
-PMUB;Programmatic Underground Berlin;Programmatic Underground Berlin
-PMUP;Programmatic Uber Platz;Programmatic Uber Platz
-PMUS;Programmatic Campus Screens;Programmatic Campus Screens
-PMVD;Programmatic DCLP;Programmatic Digital City Light Poster
-PMVG;Programmatic Public Video Giant;Programmatic Public Video Giant
-PMWZ;Programmatic Wartezimmer;Programmatic Waiting Room
-SD;Digital City Light Column;Digital City Light Column
-SDBF;Digital City Light Column;Digital City Light Column
-SDBS;Digital City Light Column;Digital City Light Column
-SDBU;Digital City Light Column;Digital City Light Column
-SDBX;Digital City Light Column;Digital City Light Column
-SDEK;Digital City Light Column;Digital City Light Column
-SDFH;Digital City Light Column;Digital City Light Column
-SDPH;Digital City Light Column;Digital City Light Column
-SDPO;Digital City Light Column;Digital City Light Column
-SDPP;Digital City Light Column;Digital City Light Column
-SDQA;Digital City Light Column;Digital City Light Column
-SDST;Digital City Light Column;Digital City Light Column
-SDWH;Digital City Light Column;Digital City Light Column
-SMAD;Social Media Advertising;Social Media Advertising
-VD;Digital City Light Poster;Digital City Light Poster
-VDBF;Digital City Light Poster;Digital City Light Poster
-VDBS;Digital City Light Poster;Digital City Light Poster
-VDBU;Digital City Light Poster;Digital City Light Poster
-VDBX;Digital City Light Poster;Digital City Light Poster
-VDCN;DCN - Digital City Net (dCLP) - WallDecaux;DCN - Digital City Net (dCLP) - WallDecaux
-VDDN;DDN - Digital Deluxe Net (dCLP) - WallDecaux;DDN - Digital Deluxe Net (dCLP) - WallDecaux
-VDEK;Digital City Light Poster;Digital City Light Poster
-VDFH;Digital City Light Poster;Digital City Light Poster
-VDPH;Digital City Light Poster;Digital City Light Poster
-VDPO;Digital City Light Poster;Digital City Light Poster
-VDPP;Digital City Light Poster;Digital City Light Poster
-VDQA;Digital City Light Poster;Digital City Light Poster
-VDST;Digital City Light Poster;Digital City Light Poster
-VDUB;DUB - Digital Underground Net (dCLP) - WallDecaux;DUB - Digital Underground Net (dCLP) - WallDecaux
-VDWH;Digital City Light Poster;Digital City Light Poster
-XC;X-Channel;X-Channel
-HO;Honorar;Fee
-HOFI;Honorar Fix;Fixed fee
-HOIN;Honorar International;International fee
-HOPM;Honorar Programatisch;Programmatic fee
-KO;Sonderkosten;Specialcost
-KOAS;Ad Serving;Ad Serving
-KOBL;Belegbilder;Pictures of Proof
-KOBS;Brand Lift Study;Brand Lift Study
-KOBV;Belegvideo;Video of Proof
-KOCT;Conversion Tracking;Conversion Tracking
-KODA;Kosten für Datenannahme / Motivhandling;Handling Costs / Technical Costs
-KODF;Data Fee;Data Fee
-KODO;Data Onboarding;Data Onboarding
-KODS;DSP Fee;DSP Fee
-KOEK;Einlagerungskosten;Storage costs
-KOEX;Expresskosten;Express costs
-KOEZ;Einzelbuchungszuschlag;Individual booking surcharge
-KOFF;Konfektionierungskosten;Assembly costs
-KOFM;Footfall Measurement;Footfall Measurement
-KOGK;Genehmigungskosten;Approval costs
-KOHO;Honorar;Fee
-KOHP;Handlingpauschale;Handling Costs / Technical Costs
-KOIN;Instandhaltungen;Maintenance
-KOKF;Klebekosten-freespace on top;Adhesive costs-freespace on top
-KOKK;Klebekosten;Adhesive costs
-KOKN;Klebekosten-ShoppingNet;Adhesive costs-ShoppingNet
-KOKS;Klebekosten - Sondertour;Adhesive costs - special tour
-KOLK;Logistikkosten;Logistic Costs
-KOLS;Lokale Steuern;Local taxes
-KOMK;Montage- / Demontage-Kosten;Assembly / disassembly costs
-KOMT;Motivtest;Motif test
-KOOK;Organisationskosten;Organizational costs
-KOPK;Produktionskosten;Production costs
-KOSB;Standby-Tage;Standby days
-KOSO;Sonstige Sonderkosten;Additional costs
-KOSR;Stornokosten;Cancellation costs
-KOSS;Schnittstelle;Interface
-KOST;Stromkosten;Electricity costs
-KOUS;Non USD Charge;Non USD Charge
-KOVA;Verspätete Anlieferung;Late delivery
-KOVK;Versandkosten;Shipping costs
-KOWA;Werbeabgabe;Advertising Fee
-`;
-  /* ================================================================================
-     ENDE DES BEARBEITBAREN BEREICHS — Ab hier bitte keine Änderungen vornehmen.
-  ================================================================================ */
-
-  function parseMediumMapping(raw){
-    var mapDe = {};
-    var mapEn = {};
-    raw.split(/\r?\n/).forEach(function(line){
-      line = line.trim();
-      if (!line) return;
-      var parts = line.split(';');
-      if (parts.length < 2) return;
-      var abbr = parts[0].trim();
-      var de = parts[1] !== undefined ? parts[1].trim() : '';
-      var en = parts[2] !== undefined ? parts[2].trim() : '';
-      if (!abbr || !de) return;
-      var key = abbr.toUpperCase();
-      mapDe[key] = de;
-      mapEn[key] = en || de; // Fallback: ohne englischen Begriff wird der deutsche verwendet
-    });
-    return { de: mapDe, en: mapEn };
-  }
-  var MEDIUM_MAPPING = parseMediumMapping(RAW_MAPPING_DATA);
-
-  function getMediumDisplayName(abbr, lang){
-    if (abbr === undefined || abbr === null || abbr === '') return abbr;
-    var key = String(abbr).trim().toUpperCase();
-    var langKey = (lang === 'en') ? 'en' : 'de';
-    var map = MEDIUM_MAPPING[langKey] || {};
-    return map.hasOwnProperty(key) ? map[key] : abbr;
-  }
-
-  // ---------- Sprach-/Übersetzungssystem ----------
-  var currentLanguage = 'de'; // 'de' oder 'en'
-
-  var LABELS = {
-    de: {
-      kopf: { Konzern:'Konzern', Kunde:'Kunde', Kundenr:'Kundenr', Kampagne:'Kampagne', Agentur:'Agentur', KampagnenID:'Kampagnen-ID' },
-      kopfBadge: 'Konzern · Kunde · Kundenr · Kampagne · Agentur · Kampagnen-ID',
-      columns: {
-        Medium:'Medium', Ort:'Ort', Termin:'Termin', Auftragsart:'Auftragsart',
-        Stellenanzahl:'Stellenanzahl', KB3:'Brutto3', KB1:'Brutto1', KN1:'Netto', KN2:'Netto/Netto', KN3:'Netto/Netto/Netto', KN4:'Netto/Netto/Netto/Netto',
-        SMV:'SMV', Agenturhonorar:'Agenturhonorar', OrdnerNo:'Auftragsnummer'
-      },
-      auftragsart: { Inventory:'Inventory', Klassisch:'Klassisch' },
-      totalLabel: 'GESAMT',
-      exportTitle: 'Einkaufsübersicht'
-    },
-    en: {
-      kopf: { Konzern:'Corporation', Kunde:'Client', Kundenr:'Client No.', Kampagne:'Campaign', Agentur:'Agency', KampagnenID:'Campaign ID' },
-      kopfBadge: 'Corporation · Client · Client No. · Campaign · Agency · Campaign ID',
-      columns: {
-        Medium:'Media', Ort:'City', Termin:'Date', Auftragsart:'Order type',
-        Stellenanzahl:'Number of sites', Brutto3:'gross3', Brutto1:'gross', 'Netto':'net', 'Netto/Netto':'net/net', 'Netto/Netto/Netto':'net/net/net', 'Netto/Netto/Netto/Netto':'net/net/net/net',
-        SMV:'SAC', Agenturhonorar:'Agency fee', OrdnerNo:'Order No'
-      },
-      auftragsart: { Inventory:'Inventory', Klassisch:'Regular' },
-      totalLabel: 'TOTAL',
-      exportTitle: 'Buying Result'
-    }
-  };
-
-  function t(){ return LABELS[currentLanguage]; }
-  function colLabel(key){ return t().columns[key] || key; }
-  function kopfLabel(key){ return t().kopf[key] || key; }
-  function auftragsartLabel(internalValue){ return t().auftragsart[internalValue] || internalValue; }
-
-  // ---------- Column index map (0-based) ----------
-  var IDX = {
-    ordnerNo:    1 - 1,
-    auftragsart: 4 - 1,
-    buchtyp:     4 - 1,
-    stellenanzahl: 12 - 1,
-    medium:      18 - 1,
-    ort:         24 - 1,
-    termin:      28 - 1,
-    kb3:         32 - 1,
-    kb1:         33 - 1,
-    kn1:         34 - 1,
-    kn2:         35 - 1,
-    kn3:         36 - 1,
-    kn4:         37 - 1,
-    smv:         44 - 1,
-    agenturhonorar: 48 - 1,
-    konzern:     104 - 1,
-    kunde:       105 - 1,
-    kundenr:     106 - 1,
-    kampagne:    107 - 1,
-    agentur:     108 - 1,
-    kampagnenid: 109 - 1
-  };
-
-  // baseColumns: "key" ist der interne, sprachneutrale Schlüssel.
-  // Die angezeigte Bezeichnung kommt IMMER dynamisch über colLabel(key).
-  var baseColumns = [
-    { key:'Medium', type:'text' },
-    { key:'Ort', type:'text' },
-    { key:'Termin', type:'text' },
-    { key:'Auftragsart', type:'text' },
-    { key:'Stellenanzahl', type:'number', decimals:0 },
-    { key:'Brutto3', type:'number', decimals:2 },
-    { key:'Brutto1', type:'number', decimals:2 },
-    { key:'Netto', type:'number', decimals:2 },
-    { key:'Netto/Netto', type:'number', decimals:2 },
-    { key:'Netto/Netto/Netto', type:'number', decimals:2 },
-    { key:'Netto/Netto/Netto/Netto', type:'number', decimals:2 },
-    { key:'SMV', type:'number', decimals:2 },
-    { key:'Agenturhonorar', type:'number', decimals:2 },
-    { key:'Auftragsnummer', type:'text' }
-  ];
-
-  var customColumns = [];   // { key, label (fest, vom Nutzer vergeben - sprachunabhängig), type, decimals, colAKey, colBKey }
-  var allColumns = baseColumns.slice();
-  var columnVisibility = {};
-  var aggregatedRows = [];
-  var kopfHeader = null;
-  var rawAoaData = null;
-  var rawFileBaseName = 'Import';
-  var rawColumnVisibility = {};
-
-  var durchhangActive = false;
-  var orteZusammenfassenActive = false;
-
-  var templateDirHandle = null;
-  var fsApiSupported = ('showDirectoryPicker' in window);
-
-  baseColumns.forEach(function(c){ columnVisibility[c.key] = true; });
-  columnVisibility['Auftragsnummer'] = false;
-
-  function getColumnLabel(col){
-    // Custom-Spalten (Kundenpreis) haben einen fest vom Nutzer vergebenen Namen -> nicht übersetzen.
-    if (col.label !== undefined) return col.label;
-    return colLabel(col.key);
-  }
-
-  // Ermittelt den anzuzeigenden Medium-Begriff einer aggregierten Zeile in der
-  // AKTUELL gewählten Sprache, anhand der repräsentativen Abkürzung der Gruppe.
-  function getRowMediumDisplay(row){
-    if (row.MediumCanonicalAbbr){
-      return getMediumDisplayName(row.MediumCanonicalAbbr, currentLanguage);
-    }
-    return row.MediumKey || '';
-  }
-
-  // ---------- Helpers ----------
-  function parseGermanNumber(raw){
-    if (raw === undefined || raw === null) return 0;
-    var s = String(raw).trim();
-    if (s === '') return 0;
-    if (s.indexOf(',') !== -1) {
-      s = s.replace(/\./g, '');
-      s = s.replace(',', '.');
-    }
-    var n = parseFloat(s);
-    return isNaN(n) ? 0 : n;
-  }
-
-  // Interner, sprachneutraler Wert: IMMER 'Inventory' oder 'Klassisch'.
-  // Die Übersetzung zu 'Regular' (Englisch) erfolgt erst bei der Anzeige/Export via auftragsartLabel().
-  function classifyAuftragsart(raw){
-    var s = String(raw || '').trim().toUpperCase();
-    return s.indexOf('I') !== -1 ? 'Inventory' : 'Klassisch';
-  }
-
-  function isDurchhang(raw){
-    var s = String(raw || '').trim().toUpperCase();
-    return s.indexOf('D') !== -1;
-  }
-
-  function getOrdnerPrefix(raw){
-    var s = String(raw || '').trim().toUpperCase();
-    return s.substring(0, 2);
-  }
-
-  function parseTerminToDate(raw){
-    var s = String(raw || '').trim();
-    if (s === '') return null;
-    var m1 = s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})/);
-    if (m1){
-      var day = parseInt(m1[1],10), mon = parseInt(m1[2],10)-1, yr = parseInt(m1[3],10);
-      if (yr < 100) yr += 2000;
-      return new Date(yr, mon, day).getTime();
-    }
-    var m2 = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-    if (m2){
-      return new Date(parseInt(m2[1],10), parseInt(m2[2],10)-1, parseInt(m2[3],10)).getTime();
-    }
-    return null;
-  }
-
-  function compareTermin(a, b){
-    var da = parseTerminToDate(a), db = parseTerminToDate(b);
-    if (da !== null && db !== null) return da - db;
-    return String(a || '').localeCompare(String(b || ''));
-  }
-
-  function splitCSVLine(line, delim){
-    var result = [], cur = '', inQuotes = false;
-    for (var i = 0; i < line.length; i++){
-      var ch = line[i];
-      if (ch === '"'){
-        if (inQuotes && line[i+1] === '"'){ cur += '"'; i++; }
-        else inQuotes = !inQuotes;
-      } else if (ch === delim && !inQuotes){
-        result.push(cur); cur = '';
-      } else {
-        cur += ch;
-      }
-    }
-    result.push(cur);
-    return result;
-  }
-
-  function parseCSV(text){
-    var lines = text.split(/\r?\n/).filter(function(l){ return l.length > 0; });
-    if (lines.length === 0) return [];
-    var firstLine = lines[0];
-    var semi = (firstLine.match(/;/g) || []).length;
-    var comma = (firstLine.match(/,/g) || []).length;
-    var delim = semi >= comma ? ';' : ',';
-    return lines.map(function(l){ return splitCSVLine(l, delim); });
-  }
-
-  // ---------- Aggregation ----------
-  function aggregate(aoa){
-    var dataRows = aoa.slice(1).filter(function(r){
-      return r && r.length > 0 && r.some(function(c){ return c !== undefined && c !== ''; });
-    });
-
-    if (durchhangActive){
-      dataRows = dataRows.filter(function(r){
-        return !isDurchhang(r[IDX.buchtyp]);
-      });
-    }
-
-    if (dataRows.length === 0) return { header: null, rows: [] };
-
-    var first = dataRows[0];
-    var header = {
-      Konzern: first[IDX.konzern] || '',
-      Kunde: first[IDX.kunde] || '',
-      Kundenr: first[IDX.kundenr] || '',
-      Kampagne: first[IDX.kampagne] || '',
-      Agentur: first[IDX.agentur] || '',
-      KampagnenID: first[IDX.kampagnenid] || ''
-    };
-
-    var groups = {};
-    var groupOrder = [];
-
-    dataRows.forEach(function(r){
-      var mediumRaw = r[IDX.medium] !== undefined ? String(r[IDX.medium]).trim() : '';
-      // Gruppierung erfolgt IMMER anhand des DEUTSCHEN Begriffs (Kanonisch, unabhängig von
-      // der aktuell gewählten Anzeigesprache), damit die Gruppen beim Sprachwechsel stabil bleiben.
-      var mediumGroupKey = getMediumDisplayName(mediumRaw, 'de');
-
-      var ort = r[IDX.ort] !== undefined ? String(r[IDX.ort]).trim() : '';
-      var termin = r[IDX.termin] !== undefined ? String(r[IDX.termin]).trim() : '';
-      var auftragsartGroup = classifyAuftragsart(r[IDX.auftragsart]); // 'Inventory' | 'Klassisch' (intern, sprachneutral)
-      var AuftragsnummerRaw = r[IDX.Auftragsnummer] !== undefined ? String(r[IDX.Auftragsnummer]).trim() : '';
-
-      var key = orteZusammenfassenActive
-        ? [mediumGroupKey, termin, auftragsartGroup].join('|||')
-        : [mediumGroupKey, ort, termin, auftragsartGroup].join('|||');
-
-      if (!groups[key]) {
-        groups[key] = {
-          MediumKey: mediumGroupKey, // deutscher Begriff - nur zur Gruppierung, Anzeige über getRowMediumDisplay()
-          MediumAbbrSet: {},
-          Ort: ort,
-          OrtSet: {},
-          Termin: termin,
-          Auftragsart: auftragsartGroup, // intern immer 'Inventory' oder 'Klassisch'
-          Stellenanzahl: 0, Brutto3: 0, Brutto1: 0, Netto: 0, 'Netto/Netto': 0, 'Netto/Netto/Netto': 0, 'Netto/Netto/Netto/Netto': 0, SMV: 0, Agenturhonorar: 0,
-          Auftragsnummer: AuftragsnummerRaw,
-          OrdnerPrefix: getOrdnerPrefix(AuftragsnummerRaw)
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script>
+      (function () {
+        const state = {
+          data: [],
+          aggregated: [],
+          columnVisibility: {},
+          rawColumnVisibility: {},
+          lang: 'de',
+          durchhang: false,
+          summarizePlaces: false,
+          customColumns: [],
+          columns: [],
+          currentFileName: 'import',
         };
-        groupOrder.push(key);
-      }
-      var g = groups[key];
-      if (mediumRaw !== '') g.MediumAbbrSet[mediumRaw.toUpperCase()] = true;
-      if (orteZusammenfassenActive && ort !== ''){
-        g.OrtSet[ort] = true;
-      }
 
-      g.Stellenanzahl += parseGermanNumber(r[IDX.stellenanzahl]);
-      g.Brutto3  += parseGermanNumber(r[IDX.kb3]);
-      g.Brutto1  += parseGermanNumber(r[IDX.kb1]);
-      g.Netto += parseGermanNumber(r[IDX.kn1]);
-      g['Netto/Netto'] += parseGermanNumber(r[IDX.kn2]);
-      g['Netto/Netto/Netto'] += parseGermanNumber(r[IDX.kn3]);
-  	g['Netto/Netto/Netto/Netto'] += parseGermanNumber(r[IDX.kn4]);
-      g.SMV += parseGermanNumber(r[IDX.smv]);
-      g.Agenturhonorar += parseGermanNumber(r[IDX.agenturhonorar]);
-    });
+        const columnDefs = [
+          { key: 'Medium', type: 'text' },
+          { key: 'Ort', type: 'text' },
+          { key: 'Termin', type: 'text' },
+          { key: 'Auftragsart', type: 'text' },
+          { key: 'Stellenanzahl', type: 'number', decimals: 0 },
+          { key: 'Brutto3', type: 'number', decimals: 2 },
+          { key: 'Brutto1', type: 'number', decimals: 2 },
+          { key: 'Netto', type: 'number', decimals: 2 },
+          { key: 'Netto/Netto', type: 'number', decimals: 2 },
+          { key: 'Netto/Netto/Netto', type: 'number', decimals: 2 },
+          { key: 'Netto/Netto/Netto/Netto', type: 'number', decimals: 2 },
+          { key: 'SMV', type: 'number', decimals: 2 },
+          { key: 'Agenturhonorar', type: 'number', decimals: 2 },
+          { key: 'Auftragsnummer', type: 'text' },
+        ];
 
-    var rows = groupOrder.map(function(k){
-      var g = groups[k];
-      if (orteZusammenfassenActive){
-        g.Ort = Object.keys(g.OrtSet).sort().join(', ');
-      }
-      var abbrList = Object.keys(g.MediumAbbrSet).sort();
-      g.MediumAbbrList = abbrList.join(', ');
-      // Repräsentative Abkürzung der Gruppe (alphabetisch erste) - wird verwendet, um bei
-      // Sprachwechsel den korrekten Anzeige-Begriff (DE/EN) für diese Gruppe nachzuschlagen.
-      g.MediumCanonicalAbbr = abbrList.length > 0 ? abbrList[0] : '';
-      delete g.OrtSet;
-      delete g.MediumAbbrSet;
-      return g;
-    });
+        const translations = {
+          de: {
+            total: 'GESAMT',
+            medium: 'Medium',
+            ort: 'Ort',
+            termin: 'Termin',
+            auftragsart: 'Auftragsart',
+            stellenanzahl: 'Stellenanzahl',
+            brutto3: 'Brutto3',
+            brutto1: 'Brutto1',
+            netto: 'Netto',
+            nettoNetto: 'Netto/Netto',
+            nettoNettoNetto: 'Netto/Netto/Netto',
+            nettoNettoNettoNetto: 'Netto/Netto/Netto/Netto',
+            smv: 'SMV',
+            agenturhonorar: 'Agenturhonorar',
+            auftragsnummer: 'Auftragsnummer',
+            inventory: 'Inventory',
+            klassisch: 'Klassisch',
+            bucht: 'Buchtyp',
+          },
+          en: {
+            total: 'TOTAL',
+            medium: 'Media',
+            ort: 'Location',
+            termin: 'Date',
+            auftragsart: 'Order Type',
+            stellenanzahl: 'Number of sites',
+            brutto3: 'Gross3',
+            brutto1: 'Gross1',
+            netto: 'Net',
+            nettoNetto: 'Net/Net',
+            nettoNettoNetto: 'Net/Net/Net',
+            nettoNettoNettoNetto: 'Net/Net/Net/Net',
+            smv: 'SAC',
+            agenturhonorar: 'Agency fee',
+            auftragsnummer: 'Order No',
+            inventory: 'Inventory',
+            klassisch: 'Standard',
+            bucht: 'Book type',
+          },
+        };
 
-    rows.sort(function(a, b){
-      if (a.OrdnerPrefix < b.OrdnerPrefix) return -1;
-      if (a.OrdnerPrefix > b.OrdnerPrefix) return 1;
-      return compareTermin(a.Termin, b.Termin);
-    });
-
-    return { header: header, rows: rows };
-  }
-
-  function applyDecimalRule(col, value){
-    if (col.decimals === 0) return Math.round(value);
-    return value;
-  }
-
-  function computeTotals(){
-    var totals = {};
-    allColumns.forEach(function(c){
-      if (c.type === 'number') totals[c.key] = 0;
-      else totals[c.key] = '';
-    });
-    totals.Medium = t().totalLabel; // GESAMT / TOTAL, je nach Sprache
-    aggregatedRows.forEach(function(row){
-      allColumns.forEach(function(c){
-        if (c.type === 'number') totals[c.key] += (row[c.key] || 0);
-      });
-    });
-    allColumns.forEach(function(c){
-      if (c.type === 'number') totals[c.key] = applyDecimalRule(c, totals[c.key]);
-    });
-    return totals;
-  }
-
-// ---------- Rendering: Kopfdaten (Bearbeitbar) ----------
-  function renderKopf(header){
-    var el = document.getElementById('kopfInfo');
-    
-    // Die 6 Kopfdaten-Felder definieren
-    var fields = [
-      ['Konzern', header.Konzern], 
-      ['Kunde', header.Kunde], 
-      ['Kundenr', header.Kundenr],
-      ['Kampagne', header.Kampagne], 
-      ['Agentur', header.Agentur], 
-      ['KampagnenID', header.KampagnenID]
-    ];
-
-    // Für jedes Feld ein klickbares <input>-Eingabefeld rendern
-    el.innerHTML = fields.map(function(f){
-      var fieldKey = f[0];
-      var fieldValue = (f[1] || '').replace(/"/g, '&quot;');
-      
-      return '<div class="kopf-item">' +
-               '<span class="label">' + kopfLabel(fieldKey) + '</span>' +
-               '<input type="text" class="kopf-input" data-field="' + fieldKey + '" value="' + fieldValue + '" />' +
-             '</div>';
-    }).join('');
-
-    document.getElementById('kopfBadge').textContent = t().kopfBadge;
-    document.getElementById('kopfCard').style.display = 'block';
-
-    // Event-Listener: Wenn der Nutzer im Feld tippt, wird die Änderung sofort im 'kopfHeader'-Objekt gespeichert
-    el.querySelectorAll('.kopf-input').forEach(function(inp){
-      inp.addEventListener('input', function(){
-        var fieldKey = inp.getAttribute('data-field');
-        kopfHeader[fieldKey] = inp.value;
-      });
-    });
-  }
-
-  // ---------- Rendering: Ergebnis-Dashboard ----------
-  function renderDashboard(){
-    var grid = document.getElementById('checkboxGrid');
-    grid.innerHTML = allColumns.map(function(c){
-      return '<label class="checkbox-item"><input type="checkbox" data-colkey="' + c.key + '" ' +
-             (columnVisibility[c.key] ? 'checked' : '') + ' /> ' + getColumnLabel(c) + '</label>';
-    }).join('');
-
-    grid.querySelectorAll('input[type="checkbox"]').forEach(function(cb){
-      cb.addEventListener('change', function(){
-        columnVisibility[cb.getAttribute('data-colkey')] = cb.checked;
-        renderTable();
-      });
-    });
-  }
-
-  // ---------- Rendering: Rohdaten-Dashboard ----------
-  function renderRawDashboard(){
-    if (!rawAoaData || rawAoaData.length === 0) return;
-    var headerRow = rawAoaData[0];
-    var grid = document.getElementById('rawCheckboxGrid');
-    grid.innerHTML = headerRow.map(function(h, idx){
-      var key = String(idx);
-      if (rawColumnVisibility[key] === undefined) rawColumnVisibility[key] = true;
-      var label = (h !== undefined && h !== '') ? h : ('Spalte ' + (idx + 1));
-      return '<label class="checkbox-item"><input type="checkbox" data-rawidx="' + idx + '" ' +
-             (rawColumnVisibility[key] ? 'checked' : '') + ' /> ' + label + '</label>';
-    }).join('');
-
-    grid.querySelectorAll('input[type="checkbox"]').forEach(function(cb){
-      cb.addEventListener('change', function(){
-        rawColumnVisibility[cb.getAttribute('data-rawidx')] = cb.checked;
-      });
-    });
-  }
-
-  document.getElementById('rawSelectAllBtn').addEventListener('click', function(){
-    Object.keys(rawColumnVisibility).forEach(function(k){ rawColumnVisibility[k] = true; });
-    renderRawDashboard();
-  });
-  document.getElementById('rawSelectNoneBtn').addEventListener('click', function(){
-    Object.keys(rawColumnVisibility).forEach(function(k){ rawColumnVisibility[k] = false; });
-    renderRawDashboard();
-  });
-
-  function formatNum(n, col){
-    var decimals = (col && col.decimals !== undefined) ? col.decimals : 2;
-    var v = applyDecimalRule(col || {decimals:decimals}, Number(n));
-    return v.toLocaleString('de-DE', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
-  }
-
-  function renderTable(){
-    var visibleCols = allColumns.filter(function(c){ return columnVisibility[c.key]; });
-    var thead = document.getElementById('resultThead');
-    var tbody = document.getElementById('resultTbody');
-    var tfoot = document.getElementById('resultTfoot');
-
-    thead.innerHTML = '<tr>' + visibleCols.map(function(c){ return '<th>' + getColumnLabel(c) + '</th>'; }).join('') + '</tr>';
-
-    tbody.innerHTML = aggregatedRows.map(function(row){
-      return '<tr>' + visibleCols.map(function(c){
-        if (c.key === 'Medium'){
-          var tooltip = row.MediumAbbrList ? ('Abkürzungen: ' + row.MediumAbbrList) : '';
-          var displayMedium = getRowMediumDisplay(row);
-          return '<td title="' + tooltip.replace(/"/g,'&quot;') + '">' + (displayMedium !== undefined ? displayMedium : '') + '</td>';
+        function normalizeText(value) {
+          if (value === null || value === undefined) return '';
+          return String(value).trim();
         }
-        if (c.key === 'Auftragsart'){
-          var displayVal = auftragsartLabel(row[c.key]);
-          var tagClass = row[c.key] === 'Inventory' ? 'tag-inventory' : 'tag-sonstige';
-          return '<td><span class="' + tagClass + '">' + displayVal + '</span></td>';
+
+        function parseNumber(value) {
+          if (value === null || value === undefined || value === '') return 0;
+          const cleaned = String(value).replace(/\./g, '').replace(',', '.').replace(/[^0-9.\-]/g, '');
+          const num = Number(cleaned);
+          return Number.isFinite(num) ? num : 0;
         }
-        if (c.type === 'number'){
-          return '<td class="num-col">' + formatNum(row[c.key] || 0, c) + '</td>';
+
+        function detectIndex(headers, candidates) {
+          const normalized = headers.map((header) => normalizeText(header).toLowerCase());
+          for (const candidate of candidates) {
+            const idx = normalized.findIndex((h) => h === candidate || h.includes(candidate));
+            if (idx !== -1) return idx;
+          }
+          return -1;
         }
-        return '<td title="' + (row[c.key] !== undefined ? String(row[c.key]).replace(/"/g,'&quot;') : '') + '">' + (row[c.key] !== undefined ? row[c.key] : '') + '</td>';
-      }).join('') + '</tr>';
-    }).join('');
 
-    var totals = computeTotals();
-    tfoot.innerHTML = '<tr>' + visibleCols.map(function(c, i){
-      if (c.type === 'number'){
-        return '<td class="num-col">' + formatNum(totals[c.key] || 0, c) + '</td>';
-      }
-      return '<td>' + (i === 0 ? t().totalLabel : '') + '</td>';
-    }).join('') + '</tr>';
-
-    document.getElementById('rowCountBadge').textContent = aggregatedRows.length + ' Zeilen';
-  }
-
-  function refreshNumericSelectOptions(){
-    var numericCols = allColumns.filter(function(c){ return c.type === 'number' && c.key !== 'Stellenanzahl'; });
-    ['selectColA', 'selectColB', 'selectColC'].forEach(function(id){
-      var sel = document.getElementById(id);
-      var optionsHtml = '<option value="__none__">Keine</option>' +
-        numericCols.map(function(c){ return '<option value="' + c.key + '">' + getColumnLabel(c) + '</option>'; }).join('');
-      sel.innerHTML = optionsHtml;
-    });
-  }
-
-  function applyCustomColumns(){
-    customColumns.forEach(function(cc){
-      aggregatedRows.forEach(function(row){
-        var valA = (cc.colAKey !== '__none__') ? (row[cc.colAKey] || 0) : 0;
-        var valB = (cc.colBKey !== '__none__') ? (row[cc.colBKey] || 0) : 0;
-        row[cc.key] = valA + valB;
-      });
-      if (allColumns.indexOf(cc) === -1) allColumns.push(cc);
-      if (columnVisibility[cc.key] === undefined) columnVisibility[cc.key] = true;
-    });
-  }
-
-  function rerunAggregation(){
-    if (!rawAoaData) return;
-    var result = aggregate(rawAoaData);
-    if (!result.header || result.rows.length === 0){
-      document.getElementById('fileStatus').textContent = 'Keine verwertbaren Datenzeilen nach Anwendung der Optionen gefunden.';
-      document.getElementById('fileStatus').className = 'status-msg status-error';
-      aggregatedRows = [];
-      renderTable();
-      return;
-    }
-    kopfHeader = result.header;
-    aggregatedRows = result.rows;
-
-    var prevVisibility = columnVisibility;
-    allColumns = baseColumns.slice();
-    columnVisibility = {};
-    baseColumns.forEach(function(c){ columnVisibility[c.key] = (prevVisibility[c.key] !== undefined) ? prevVisibility[c.key] : true; });
-    columnVisibility['Auftragsnummer'] = prevVisibility['Auftragsnummer'] || false;
-
-    applyCustomColumns();
-
-    renderKopf(kopfHeader);
-    renderDashboard();
-    renderTable();
-    refreshNumericSelectOptions();
-
-    document.getElementById('fileStatus').textContent = '✔ Optionen angewendet.';
-    document.getElementById('fileStatus').className = 'status-msg status-success';
-  }
-
-  // ---------- Sprachumschaltung ----------
-  document.getElementById('langDe').addEventListener('change', function(){
-    if (this.checked){ currentLanguage = 'de'; refreshAllLanguageDependentUI(); }
-  });
-  document.getElementById('langEn').addEventListener('change', function(){
-    if (this.checked){ currentLanguage = 'en'; refreshAllLanguageDependentUI(); }
-  });
-
-  function refreshAllLanguageDependentUI(){
-    if (kopfHeader) renderKopf(kopfHeader);
-    if (aggregatedRows.length > 0){
-      renderDashboard();
-      renderTable();
-      refreshNumericSelectOptions();
-    }
-  }
-
-  // ---------- File handling ----------
-  function processData(aoa, baseName){
-    rawAoaData = aoa;
-    rawFileBaseName = baseName || 'Import';
-    rawColumnVisibility = {};
-
-    var result = aggregate(aoa);
-    if (!result.header || result.rows.length === 0){
-      document.getElementById('fileStatus').textContent = 'Keine verwertbaren Datenzeilen gefunden.';
-      document.getElementById('fileStatus').className = 'status-msg status-error';
-      return;
-    }
-    kopfHeader = result.header;
-    aggregatedRows = result.rows;
-    customColumns = [];
-    allColumns = baseColumns.slice();
-    columnVisibility = {};
-    baseColumns.forEach(function(c){ columnVisibility[c.key] = true; });
-    columnVisibility['Auftragsnummer'] = false;
-
-    document.getElementById('fileStatus').textContent = '✔ Datei erfolgreich verarbeitet.';
-    document.getElementById('fileStatus').className = 'status-msg status-success';
-    document.getElementById('emptyStateCard').style.display = 'none';
-    document.getElementById('resultCard').style.display = 'block';
-
-    renderKopf(kopfHeader);
-    renderDashboard();
-    renderRawDashboard();
-    renderTable();
-    refreshNumericSelectOptions();
-  }
-
-  function handleFile(file){
-    if (!file) return;
-    var ext = file.name.split('.').pop().toLowerCase();
-    var baseName = file.name.replace(/\.[^/.]+$/, '');
-    var reader = new FileReader();
-
-    document.getElementById('fileStatus').textContent = 'Datei wird verarbeitet …';
-    document.getElementById('fileStatus').className = 'status-msg';
-
-    if (ext === 'csv'){
-      reader.onload = function(evt){
-        var aoa = parseCSV(evt.target.result);
-        processData(aoa, baseName);
-      };
-      reader.readAsText(file, 'UTF-8');
-    } else {
-      reader.onload = function(evt){
-        var data = new Uint8Array(evt.target.result);
-        var workbook = XLSX.read(data, { type: 'array' });
-        var sheet = workbook.Sheets[workbook.SheetNames[0]];
-        var aoa = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, defval: '' });
-        processData(aoa, baseName);
-      };
-      reader.readAsArrayBuffer(file);
-    }
-  }
-
-  document.getElementById('fileInput').addEventListener('change', function(e){
-    handleFile(e.target.files[0]);
-  });
-
-  // ---------- Drag & Drop ----------
-  var dropZone = document.getElementById('dropZone');
-  dropZone.addEventListener('click', function(){ document.getElementById('fileInput').click(); });
-  ['dragenter', 'dragover'].forEach(function(evName){
-    dropZone.addEventListener(evName, function(e){
-      e.preventDefault(); e.stopPropagation();
-      dropZone.classList.add('hover');
-    });
-  });
-  ['dragleave', 'dragend'].forEach(function(evName){
-    dropZone.addEventListener(evName, function(e){
-      e.preventDefault(); e.stopPropagation();
-      dropZone.classList.remove('hover');
-    });
-  });
-  dropZone.addEventListener('drop', function(e){
-    e.preventDefault(); e.stopPropagation();
-    dropZone.classList.remove('hover');
-    var files = e.dataTransfer.files;
-    if (files && files.length > 0){ handleFile(files[0]); }
-  });
-
-  // ---------- Toggle buttons ----------
-  var durchhangBtn = document.getElementById('durchhangBtn');
-  var orteBtn = document.getElementById('orteBtn');
-
-  durchhangBtn.addEventListener('click', function(){
-    durchhangActive = !durchhangActive;
-    durchhangBtn.classList.toggle('active', durchhangActive);
-    rerunAggregation();
-  });
-
-  orteBtn.addEventListener('click', function(){
-    orteZusammenfassenActive = !orteZusammenfassenActive;
-    orteBtn.classList.toggle('active', orteZusammenfassenActive);
-    rerunAggregation();
-  });
-
-  // ---------- Dashboards toggle ----------
-  document.getElementById('toggleDashboardBtn').addEventListener('click', function(){
-    document.getElementById('columnDashboard').classList.toggle('open');
-  });
-  document.getElementById('toggleRawDashboardBtn').addEventListener('click', function(){
-    document.getElementById('rawColumnDashboard').classList.toggle('open');
-  });
-
-  // ---------- Kundenpreis modal ----------
-  var modal = document.getElementById('kundenpreisModal');
-
-  // Hilfsfunktion: Prüft anhand des Spaltennamens oder Keys, ob abgezogen werden soll
-  function sollSubtrahiertWerden(key) {
-    if (!key || key === '__none__') return false;
-    
-    // Spaltenlabel aus 'allColumns' suchen (oder Key nutzen)
-    var label = key;
-    if (typeof allColumns !== 'undefined') {
-      var foundCol = allColumns.find(function(c) { return c.key === key; });
-      if (foundCol && foundCol.label) label = foundCol.label;
-    }
-    
-    // WICHTIG: Begriffsliste MUSS in Kleinbuchstaben geschrieben sein
-    var abzugsBegriffe = ['smv', 'sac'];
-    var labelLower = label.toLowerCase();
-    
-    return abzugsBegriffe.some(function(begriff) {
-      return labelLower.includes(begriff);
-    });
-  } // <-- HIER musste die Klammer geschlossen werden!
-
-  // ---------- Auto-Generierung des Namens ----------
-  document.getElementById('autoNameBtn').addEventListener('click', function() {
-    
-    // 1. Sprache ermitteln (nutzt die globale Variable currentLanguage)
-    var isEnglish = (typeof currentLanguage !== 'undefined' && currentLanguage === 'en') ||
-                    (document.documentElement.lang === 'en');
-
-    // 2. Texte je nach Sprache definieren
-    var prefix = isEnglish ? "Client costs" : "Kundenpreis";
-    var wordSub = isEnglish ? "less" : "abzgl.";
-    var wordAdd = isEnglish ? "plus" : "zzgl.";
-
-    // Übersetzungs-Wörterbuch für englische Begriffe
-    var enTranslations = {
-      'netto': 'net',
-      'netto/netto': 'net/net',
-      'netto/netto/netto': 'net/net/net',
-      'netto/netto/netto/netto': 'net/net/net/net',
-      'brutto1': 'gross1',
-      'brutto3': 'gross3',
-      'smv': 'SAC',
-      'agenturhonorar': 'agency fee'
-    };
-
-    // Hilfsfunktion zur Ermittlung des lesbaren Labels
-    function getLabelText(selectId) {
-      var sel = document.getElementById(selectId);
-      if (!sel || sel.value === '__none__') return null;
-
-      var text = sel.options[sel.selectedIndex].text;
-      
-      if (isEnglish) {
-        var textLower = text.toLowerCase().trim();
-        if (enTranslations[textLower]) {
-          return enTranslations[textLower];
+        function formatNumber(value, decimals) {
+          const safe = Number(value) || 0;
+          return safe.toLocaleString('de-DE', {
+            minimumFractionDigits: decimals,
+            maximumFractionDigits: decimals,
+          });
         }
-      }
-      return text;
-    }
 
-    // 3. Ausgewählte Spalten abrufen
-    var labelA = getLabelText('selectColA');
-    var labelB = getLabelText('selectColB');
-    var labelC = getLabelText('selectColC');
+        function getVisibleColumns() {
+          return state.columns.filter((column) => state.columnVisibility[column.key] !== false);
+        }
 
-    var keyB = document.getElementById('selectColB').value;
-    var keyC = document.getElementById('selectColC').value;
+        function getColumnLabel(columnKey) {
+          const translated = translations[state.lang];
+          const map = {
+            Medium: translated.medium,
+            Ort: translated.ort,
+            Termin: translated.termin,
+            Auftragsart: translated.auftragsart,
+            Stellenanzahl: translated.stellenanzahl,
+            Brutto3: translated.brutto3,
+            Brutto1: translated.brutto1,
+            Netto: translated.netto,
+            'Netto/Netto': translated.nettoNetto,
+            'Netto/Netto/Netto': translated.nettoNettoNetto,
+            'Netto/Netto/Netto/Netto': translated.nettoNettoNettoNetto,
+            SMV: translated.smv,
+            Agenturhonorar: translated.agenturhonorar,
+            Auftragsnummer: translated.auftragsnummer,
+          };
+          return map[columnKey] || columnKey;
+        }
 
-    if (!labelA && !labelB && !labelC) {
-      var statusEl = document.getElementById('modalStatus');
-      statusEl.textContent = isEnglish ? 'Bitte mindestens eine Spalte auswählen.' : 'Bitte mindestens eine Spalte auswählen.';
-      statusEl.className = 'status-msg status-error';
-      return;
-    }
+        function initColumnVisibility() {
+          state.columns = [...columnDefs];
+          state.columns.forEach((column) => {
+            state.columnVisibility[column.key] = true;
+          });
+          state.columnVisibility.Auftragsnummer = false;
+        }
 
-    // 4. Namensbestandteile zusammensetzen
-    var parts = [];
+        function classifyAuftragsart(value) {
+          const v = normalizeText(value).toUpperCase();
+          return v.includes('I') ? 'Inventory' : 'Klassisch';
+        }
 
-    // Basiswert A
-    if (labelA) {
-      parts.push(labelA);
-    }
+        function getRowDisplayMedium(row) {
+          if (row && row.MediumName) return row.MediumName;
+          if (row && row.Medium) return row.Medium;
+          return '';
+        }
 
-    // Spalte B
-    if (labelB) {
-      var isSubB = sollSubtrahiertWerden(keyB);
-      parts.push((isSubB ? wordSub : wordAdd) + ' ' + labelB);
-    }
+        function aggregateRows(rawRows) {
+          if (!rawRows || rawRows.length < 2) return [];
 
-    // Spalte C
-    if (labelC) {
-      var isSubC = sollSubtrahiertWerden(keyC);
-      parts.push((isSubC ? wordSub : wordAdd) + ' ' + labelC);
-    }
+          const header = rawRows[0];
+          const actualHeaders = header.map((cell) => normalizeText(cell));
 
-    // 5. Finalen Namen generieren und in das Input-Feld schreiben
-    var finalName = prefix + " (" + parts.join(" ") + ")";
-    document.getElementById('newColName').value = finalName;
-  });
+          const indices = {
+            medium: detectIndex(actualHeaders, ['medium', 'medien', 'mediatyp']),
+            ort: detectIndex(actualHeaders, ['ort', 'stadt', 'city', 'location']),
+            termin: detectIndex(actualHeaders, ['termin', 'datum', 'date']),
+            buchtyp: detectIndex(actualHeaders, ['buchtyp', 'book type', 'type']),
+            stellen: detectIndex(actualHeaders, ['stellenanzahl', 'number of sites', 'anzahl stellen']),
+            brutto3: detectIndex(actualHeaders, ['brutto3', 'gross3']),
+            brutto1: detectIndex(actualHeaders, ['brutto1', 'gross1']),
+            netto: detectIndex(actualHeaders, ['netto', 'net']),
+            netto2: detectIndex(actualHeaders, ['netto/netto', 'net/net']),
+            netto3: detectIndex(actualHeaders, ['netto/netto/netto', 'net/net/net']),
+            netto4: detectIndex(actualHeaders, ['netto/netto/netto/netto', 'net/net/net/net']),
+            smv: detectIndex(actualHeaders, ['smv', 'sac']),
+            ah: detectIndex(actualHeaders, ['agenturhonorar', 'agency fee', 'honorar']),
+            auftragsnummer: detectIndex(actualHeaders, ['auftragsnummer', 'order no', 'ordnerno', 'ordner']),
+          };
 
-// ---------- Hilfsfunktion: Befüllung der Kundenpreis-Dropdowns ----------
-  function refreshNumericSelectOptions(){
-    // 1. Welche Spalten dürfen in Spalte A (Kostenbasis) stehen?
-    var colAAllowed = ['Brutto3', 'Brutto1', 'Netto', 'Netto/Netto', 'Netto/Netto/Netto', 'Netto/Netto/Netto/Netto'];
+          if (indices.medium === -1 && indices.ort === -1) {
+            return [];
+          }
 
-    // 2. Welche Spalten dürfen in Spalte B & C (+ / - Elemente) stehen?
-    var colBCAllowed = ['SMV', 'Agenturhonorar'];
+          const groups = new Map();
 
-    // Filter für Spalte A (Kostenbasis + benutzerdefinierte Spalten)
-    var colsA = allColumns.filter(function(c){
-      if (c.type !== 'number' || c.key === 'Stellenanzahl') return false;
-      return colAAllowed.indexOf(c.key) !== -1 || c.key.indexOf('custom_') === 0;
-    });
+          for (let i = 1; i < rawRows.length; i += 1) {
+            const row = rawRows[i];
+            if (!Array.isArray(row) || row.every((cell) => normalizeText(cell) === '')) continue;
 
-    // Filter für Spalte B & C (Elemente + benutzerdefinierte Spalten)
-    var colsBC = allColumns.filter(function(c){
-      if (c.type !== 'number' || c.key === 'Stellenanzahl') return false;
-      return colBCAllowed.indexOf(c.key) !== -1 || c.key.indexOf('custom_') === 0;
-    });
+            if (state.durchhang && normalizeText(row[indices.buchtyp !== -1 ? indices.buchtyp : 0]).toUpperCase().includes('D')) {
+              continue;
+            }
 
-    // Select A befüllen
-    var selA = document.getElementById('selectColA');
-    if (selA) {
-      selA.innerHTML = '<option value="__none__">Keine</option>' +
-        colsA.map(function(c){ 
-          return '<option value="' + c.key + '">' + getColumnLabel(c) + '</option>'; 
-        }).join('');
-    }
+            const medium = normalizeText(row[indices.medium !== -1 ? indices.medium : 0]);
+            const ort = normalizeText(row[indices.ort !== -1 ? indices.ort : 0]);
+            const termin = normalizeText(row[indices.termin !== -1 ? indices.termin : 0]);
+            const auftragsart = classifyAuftragsart(row[indices.buchtyp !== -1 ? indices.buchtyp : 0]);
+            const groupKey = state.summarizePlaces ? `${medium}|||${termin}|||${auftragsart}` : `${medium}|||${ort}|||${termin}|||${auftragsart}`;
 
-    // Select B und C befüllen
-    ['selectColB', 'selectColC'].forEach(function(id){
-      var sel = document.getElementById(id);
-      if (sel) {
-        sel.innerHTML = '<option value="__none__">Keine</option>' +
-          colsBC.map(function(c){ 
-            return '<option value="' + c.key + '">' + getColumnLabel(c) + '</option>'; 
+            if (!groups.has(groupKey)) {
+              groups.set(groupKey, {
+                Medium: medium,
+                MediumName: medium,
+                Ort: ort,
+                Termin: termin,
+                Auftragsart: auftragsart,
+                Stellenanzahl: 0,
+                Brutto3: 0,
+                Brutto1: 0,
+                Netto: 0,
+                'Netto/Netto': 0,
+                'Netto/Netto/Netto': 0,
+                'Netto/Netto/Netto/Netto': 0,
+                SMV: 0,
+                Agenturhonorar: 0,
+                Auftragsnummer: normalizeText(row[indices.auftragsnummer !== -1 ? indices.auftragsnummer : 0]),
+              });
+            }
+
+            const entry = groups.get(groupKey);
+            entry.Stellenanzahl += parseNumber(row[indices.stellen !== -1 ? indices.stellen : 0]);
+            entry.Brutto3 += parseNumber(row[indices.brutto3 !== -1 ? indices.brutto3 : 0]);
+            entry.Brutto1 += parseNumber(row[indices.brutto1 !== -1 ? indices.brutto1 : 0]);
+            entry.Netto += parseNumber(row[indices.netto !== -1 ? indices.netto : 0]);
+            entry['Netto/Netto'] += parseNumber(row[indices.netto2 !== -1 ? indices.netto2 : 0]);
+            entry['Netto/Netto/Netto'] += parseNumber(row[indices.netto3 !== -1 ? indices.netto3 : 0]);
+            entry['Netto/Netto/Netto/Netto'] += parseNumber(row[indices.netto4 !== -1 ? indices.netto4 : 0]);
+            entry.SMV += parseNumber(row[indices.smv !== -1 ? indices.smv : 0]);
+            entry.Agenturhonorar += parseNumber(row[indices.ah !== -1 ? indices.ah : 0]);
+          }
+
+          return Array.from(groups.values()).sort((a, b) => {
+            return a.Termin.localeCompare(b.Termin) || a.Medium.localeCompare(b.Medium);
+          });
+        }
+
+        function computeTotals(rows) {
+          const totals = {};
+          state.columns.forEach((column) => {
+            totals[column.key] = column.type === 'number' ? 0 : '';
+          });
+          totals.Medium = translations[state.lang].total;
+
+          rows.forEach((row) => {
+            state.columns.forEach((column) => {
+              if (column.type === 'number') {
+                totals[column.key] += Number(row[column.key]) || 0;
+              }
+            });
+          });
+
+          state.columns.forEach((column) => {
+            if (column.type === 'number') {
+              totals[column.key] = Number(totals[column.key]) || 0;
+            }
+          });
+
+          return totals;
+        }
+
+        function renderDashboard() {
+          const grid = document.getElementById('checkboxGrid');
+          if (!grid) return;
+
+          grid.innerHTML = state.columns.map((column) => {
+            return `
+              <label class="checkbox-item">
+                <input type="checkbox" data-colkey="${column.key}" ${state.columnVisibility[column.key] !== false ? 'checked' : ''} />
+                ${getColumnLabel(column.key)}
+              </label>
+            `;
           }).join('');
-      }
-    });
-  }
 
-  document.getElementById('kundenpreisBtn').addEventListener('click', function(){
-    refreshNumericSelectOptions();
-    document.getElementById('newColName').value = '';
-    document.getElementById('modalStatus').textContent = '';
-    modal.classList.add('open');
-  });
-  
-  document.getElementById('modalCancelBtn').addEventListener('click', function(){ 
-    modal.classList.remove('open'); 
-  });
-
-  document.getElementById('modalAddBtn').addEventListener('click', function(){
-    var colAKey = document.getElementById('selectColA').value;
-    var colBKey = document.getElementById('selectColB').value;
-    // Spalte C einlesen (falls im HTML vorhanden, sonst '__none__')
-    var selectC = document.getElementById('selectColC');
-    var colCKey = selectC ? selectC.value : '__none__';
-    
-    var name = document.getElementById('newColName').value.trim();
-    var statusEl = document.getElementById('modalStatus');
-
-    // 1. Validierungen
-    if (!name){
-      statusEl.textContent = 'Bitte einen Namen für die neue Spalte eingeben.';
-      statusEl.className = 'status-msg status-error';
-      return;
-    }
-    if (colAKey === '__none__' && colBKey === '__none__' && colCKey === '__none__'){
-      statusEl.textContent = 'Bitte mindestens eine Spalte auswählen.';
-      statusEl.className = 'status-msg status-error';
-      return;
-    }
-    
-    // Prüfen, ob eine Spalte doppelt ausgewählt wurde
-    if ((colAKey !== '__none__' && (colAKey === colBKey || colAKey === colCKey)) || 
-        (colBKey !== '__none__' && colBKey === colCKey)) {
-      statusEl.textContent = 'Bitte unterschiedliche Spalten auswählen (oder nicht genutzte auf „Keine“ setzen).';
-      statusEl.className = 'status-msg status-error';
-      return;
-    }
-
-    // 2. Erstellen der neuen Spalten-Definition
-    var newKey = 'custom_' + Date.now();
-    var newCol = { 
-      key: newKey, 
-      label: name, 
-      type: 'number', 
-      decimals: 2, 
-      colAKey: colAKey, 
-      colBKey: colBKey,
-      colCKey: colCKey 
-    };
-    customColumns.push(newCol);
-
-    // 3. Werte berechnen (Addition oder Subtraktion je nach Begriff)
-    var isSubB = sollSubtrahiertWerden(colBKey);
-    var isSubC = sollSubtrahiertWerden(colCKey);
-
-    aggregatedRows.forEach(function(row){
-      var valA = (colAKey !== '__none__') ? (parseFloat(row[colAKey]) || 0) : 0;
-      var valB = (colBKey !== '__none__') ? (parseFloat(row[colBKey]) || 0) : 0;
-      var valC = (colCKey !== '__none__') ? (parseFloat(row[colCKey]) || 0) : 0;
-
-      // Schritt 1: Start mit Basiswert (Spalte A)
-      var result = valA;
-
-      // Schritt 2: Spalte B verrechnen (Subtraktion bei SMV/SAC, sonst Addition)
-      if (colBKey !== '__none__') {
-        result += isSubB ? -valB : valB;
-      }
-
-      // Schritt 3: Spalte C auf das vorherige Zwischenergebnis anwenden
-      if (colCKey !== '__none__') {
-        result += isSubC ? -valC : valC;
-      }
-
-      row[newKey] = result;
-    });
-
-    allColumns.push(newCol);
-    columnVisibility[newKey] = true;
-
-    statusEl.textContent = '✔ Spalte "' + name + '" hinzugefügt.';
-    statusEl.className = 'status-msg status-success';
-
-    renderDashboard();
-    renderTable();
-    refreshNumericSelectOptions();
-
-    setTimeout(function(){ modal.classList.remove('open'); }, 700);
-  });
-
-  // ---------- Vorlagenordner / Vorlage speichern & laden (File System Access API) ----------
-  var folderInfoEl = document.getElementById('folderInfo');
-
-  function updateFolderInfo(){
-    if (templateDirHandle){
-      folderInfoEl.textContent = '📁 Vorlagenordner: "' + templateDirHandle.name + '" ausgewählt.';
-      folderInfoEl.className = 'status-msg status-success';
-    } else if (!fsApiSupported){
-      folderInfoEl.textContent = 'Dein Browser unterstützt keinen direkten Ordnerzugriff. Vorlagen werden stattdessen als Download bzw. über den Dateidialog gespeichert/geladen.';
-      folderInfoEl.className = 'status-msg status-warning';
-    } else {
-      folderInfoEl.textContent = 'Kein Vorlagenordner ausgewählt.';
-      folderInfoEl.className = 'status-msg';
-    }
-  }
-  updateFolderInfo();
-
-  document.getElementById('chooseFolderBtn').addEventListener('click', async function(){
-    if (!fsApiSupported){
-      updateFolderInfo();
-      return;
-    }
-    try {
-      var handle = await window.showDirectoryPicker();
-      var perm = await handle.requestPermission({ mode: 'readwrite' });
-      if (perm !== 'granted'){
-        folderInfoEl.textContent = 'Zugriff auf den Ordner wurde nicht gewährt.';
-        folderInfoEl.className = 'status-msg status-error';
-        return;
-      }
-      templateDirHandle = handle;
-      updateFolderInfo();
-    } catch(e){
-      if (e.name !== 'AbortError'){
-        folderInfoEl.textContent = 'Fehler beim Öffnen des Ordners: ' + e.message;
-        folderInfoEl.className = 'status-msg status-error';
-      }
-    }
-  });
-
-  function buildCurrentSettingsSnapshot(){
-    return {
-      columnVisibility: columnVisibility,
-      rawColumnVisibility: rawColumnVisibility,
-      durchhangActive: durchhangActive,
-      orteZusammenfassenActive: orteZusammenfassenActive,
-      language: currentLanguage,
-      customColumns: customColumns.map(function(cc){
-        return { key: cc.key, label: cc.label, type: cc.type, decimals: cc.decimals, colAKey: cc.colAKey, colBKey: cc.colBKey };
-      })
-    };
-  }
-
-  function applySettingsSnapshot(snapshot){
-    if (!snapshot) return;
-    durchhangActive = !!snapshot.durchhangActive;
-    orteZusammenfassenActive = !!snapshot.orteZusammenfassenActive;
-    document.getElementById('durchhangBtn').classList.toggle('active', durchhangActive);
-    document.getElementById('orteBtn').classList.toggle('active', orteZusammenfassenActive);
-
-    if (snapshot.language === 'en' || snapshot.language === 'de'){
-      currentLanguage = snapshot.language;
-      document.getElementById('langDe').checked = (currentLanguage === 'de');
-      document.getElementById('langEn').checked = (currentLanguage === 'en');
-    }
-
-    if (rawAoaData){
-      var result = aggregate(rawAoaData);
-      if (result.header && result.rows.length > 0){
-        kopfHeader = result.header;
-        aggregatedRows = result.rows;
-      }
-    }
-
-    allColumns = baseColumns.slice();
-    columnVisibility = {};
-    baseColumns.forEach(function(c){ columnVisibility[c.key] = true; });
-    columnVisibility['Auftragsnummer'] = false;
-
-    customColumns = (snapshot.customColumns || []).slice();
-    applyCustomColumns();
-
-    if (snapshot.columnVisibility){
-      Object.keys(snapshot.columnVisibility).forEach(function(k){
-        columnVisibility[k] = snapshot.columnVisibility[k];
-      });
-    }
-    if (snapshot.rawColumnVisibility){
-      rawColumnVisibility = Object.assign({}, snapshot.rawColumnVisibility);
-    }
-
-    if (kopfHeader) renderKopf(kopfHeader);
-    renderDashboard();
-    renderRawDashboard();
-    renderTable();
-    refreshNumericSelectOptions();
-  }
-
-  document.getElementById('saveTemplateBtn').addEventListener('click', function(){
-    document.getElementById('templateNameInput').value = '';
-    document.getElementById('saveTemplateStatus').textContent = '';
-    document.getElementById('saveTemplateModal').classList.add('open');
-  });
-  document.getElementById('saveTemplateCancelBtn').addEventListener('click', function(){
-    document.getElementById('saveTemplateModal').classList.remove('open');
-  });
-
-  document.getElementById('saveTemplateConfirmBtn').addEventListener('click', async function(){
-    var name = document.getElementById('templateNameInput').value.trim();
-    var statusEl = document.getElementById('saveTemplateStatus');
-    if (!name){
-      statusEl.textContent = 'Bitte einen Namen für die Vorlage eingeben.';
-      statusEl.className = 'status-msg status-error';
-      return;
-    }
-    var fileName = name.replace(/[\\/:*?"|]/g, '_') + '.json';
-    var jsonContent = JSON.stringify(buildCurrentSettingsSnapshot(), null, 2);
-
-    try {
-      if (templateDirHandle){
-        var fileHandle = await templateDirHandle.getFileHandle(fileName, { create: true });
-        var writable = await fileHandle.createWritable();
-        await writable.write(jsonContent);
-        await writable.close();
-        statusEl.textContent = '✔ Vorlage "' + name + '" im Ordner "' + templateDirHandle.name + '" gespeichert.';
-        statusEl.className = 'status-msg status-success';
-        setTimeout(function(){ document.getElementById('saveTemplateModal').classList.remove('open'); }, 900);
-      } else if (fsApiSupported){
-        var saveHandle = await window.showSaveFilePicker({
-          suggestedName: fileName,
-          types: [{ description: 'JSON Vorlage', accept: { 'application/json': ['.json'] } }]
-        });
-        var w2 = await saveHandle.createWritable();
-        await w2.write(jsonContent);
-        await w2.close();
-        statusEl.textContent = '✔ Vorlage "' + name + '" gespeichert.';
-        statusEl.className = 'status-msg status-success';
-        setTimeout(function(){ document.getElementById('saveTemplateModal').classList.remove('open'); }, 1400);
-      } else {
-        var blob = new Blob([jsonContent], { type: 'application/json' });
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement('a');
-        a.href = url; a.download = fileName;
-        document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        statusEl.textContent = '✔ Vorlage "' + name + '" wurde heruntergeladen.';
-        statusEl.className = 'status-msg status-success';
-        setTimeout(function(){ document.getElementById('saveTemplateModal').classList.remove('open'); }, 1400);
-      }
-    } catch(e){
-      if (e.name !== 'AbortError'){
-        statusEl.textContent = 'Fehler beim Speichern: ' + e.message;
-        statusEl.className = 'status-msg status-error';
-      }
-    }
-  });
-
-  async function renderTemplateListFromFolder(){
-    var listEl = document.getElementById('templateList');
-    if (!templateDirHandle){
-      listEl.innerHTML = '<p style="font-size:13px;color:#000050;opacity:0.7;">Kein Vorlagenordner ausgewählt.</p>' +
-        '<div class="row-flex" style="margin-top:8px;"><button class="btn-secondary" id="directLoadBtn">📄 Einzelne Datei über Dialog laden</button></div>';
-      document.getElementById('directLoadBtn').addEventListener('click', loadTemplateViaFileDialog);
-      return;
-    }
-    var entries = [];
-    for await (const [fname, fhandle] of templateDirHandle.entries()){
-      if (fhandle.kind === 'file' && fname.toLowerCase().endsWith('.json')){
-        entries.push({ name: fname, handle: fhandle });
-      }
-    }
-    if (entries.length === 0){
-      listEl.innerHTML = '<p style="font-size:13px;color:#000050;opacity:0.7;">Keine Vorlagen (.json) in diesem Ordner gefunden.</p>';
-      return;
-    }
-    listEl.innerHTML = entries.map(function(e){
-      var displayName = e.name.replace(/\.json$/i, '');
-      return '<div class="template-row"><span>' + displayName + '</span>' +
-             '<span><button class="btn-primary" data-loadfile="' + e.name + '">Laden</button> ' +
-             '<button class="btn-secondary" data-deletefile="' + e.name + '">Löschen</button></span></div>';
-    }).join('');
-
-    listEl.querySelectorAll('button[data-loadfile]').forEach(function(btn){
-      btn.addEventListener('click', async function(){
-        var fname = btn.getAttribute('data-loadfile');
-        try {
-          var fh = await templateDirHandle.getFileHandle(fname);
-          var file = await fh.getFile();
-          var text = await file.text();
-          var snapshot = JSON.parse(text);
-          applySettingsSnapshot(snapshot);
-          document.getElementById('loadTemplateStatus').textContent = '✔ Vorlage "' + fname.replace(/\.json$/i,'') + '" geladen.';
-          document.getElementById('loadTemplateStatus').className = 'status-msg status-success';
-        } catch(e){
-          document.getElementById('loadTemplateStatus').textContent = 'Fehler beim Laden: ' + e.message;
-          document.getElementById('loadTemplateStatus').className = 'status-msg status-error';
+          grid.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+            checkbox.addEventListener('change', (event) => {
+              const key = event.target.dataset.colkey;
+              state.columnVisibility[key] = event.target.checked;
+              renderTable();
+            });
+          });
         }
-      });
-    });
-    listEl.querySelectorAll('button[data-deletefile]').forEach(function(btn){
-      btn.addEventListener('click', async function(){
-        var fname = btn.getAttribute('data-deletefile');
-        try {
-          await templateDirHandle.removeEntry(fname);
-          renderTemplateListFromFolder();
-        } catch(e){
-          document.getElementById('loadTemplateStatus').textContent = 'Fehler beim Löschen: ' + e.message;
-          document.getElementById('loadTemplateStatus').className = 'status-msg status-error';
+
+        function renderRawDashboard() {
+          const rawGrid = document.getElementById('rawCheckboxGrid');
+          if (!rawGrid || !state.data.length) return;
+
+          const headerRow = state.data[0];
+          rawGrid.innerHTML = headerRow.map((header, idx) => {
+            const label = normalizeText(header) || `Spalte ${idx + 1}`;
+            const checked = state.rawColumnVisibility[idx] !== false;
+            return `
+              <label class="checkbox-item">
+                <input type="checkbox" data-rawidx="${idx}" ${checked ? 'checked' : ''} />
+                ${label}
+              </label>
+            `;
+          }).join('');
+
+          rawGrid.querySelectorAll('input[type="checkbox"]').forEach((checkbox) => {
+            checkbox.addEventListener('change', (event) => {
+              const idx = Number(event.target.dataset.rawidx);
+              state.rawColumnVisibility[idx] = event.target.checked;
+            });
+          });
         }
-      });
-    });
-  }
 
-  function loadTemplateViaFileDialog(){
-    var input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    input.addEventListener('change', function(){
-      var file = input.files[0];
-      if (!file) return;
-      var reader = new FileReader();
-      reader.onload = function(evt){
-        try {
-          var snapshot = JSON.parse(evt.target.result);
-          applySettingsSnapshot(snapshot);
-          document.getElementById('loadTemplateStatus').textContent = '✔ Vorlage "' + file.name.replace(/\.json$/i,'') + '" geladen.';
-          document.getElementById('loadTemplateStatus').className = 'status-msg status-success';
-        } catch(e){
-          document.getElementById('loadTemplateStatus').textContent = 'Ungültige Vorlagendatei.';
-          document.getElementById('loadTemplateStatus').className = 'status-msg status-error';
+        function renderTable() {
+          const tbody = document.getElementById('resultTbody');
+          const thead = document.getElementById('resultThead');
+          const tfoot = document.getElementById('resultTfoot');
+          const visibleColumns = getVisibleColumns();
+
+          thead.innerHTML = `<tr>${visibleColumns.map((column) => `<th>${getColumnLabel(column.key)}</th>`).join('')}</tr>`;
+
+          tbody.innerHTML = state.aggregated.map((row) => {
+            return `<tr>${visibleColumns.map((column) => {
+              if (column.key === 'Medium') {
+                return `<td>${getRowDisplayMedium(row)}</td>`;
+              }
+
+              if (column.key === 'Auftragsart') {
+                const label = row[column.key] === 'Inventory' ? 'Inventory' : 'Klassisch';
+                const tagClass = row[column.key] === 'Inventory' ? 'tag-inventory' : 'tag-sonstige';
+                return `<td><span class="${tagClass}">${label}</span></td>`;
+              }
+
+              if (column.type === 'number') {
+                return `<td class="num-col">${formatNumber(row[column.key] || 0, column.decimals || 2)}</td>`;
+              }
+
+              return `<td>${row[column.key] || ''}</td>`;
+            }).join('')}</tr>`;
+          }).join('');
+
+          const totals = computeTotals(state.aggregated);
+          tfoot.innerHTML = `<tr>${visibleColumns.map((column, index) => {
+            if (column.type === 'number') {
+              return `<td class="num-col">${formatNumber(totals[column.key] || 0, column.decimals || 2)}</td>`;
+            }
+            return `<td>${index === 0 ? translations[state.lang].total : ''}</td>`;
+          }).join('')}</tr>`;
+
+          document.getElementById('rowCountBadge').textContent = `${state.aggregated.length} Zeilen`;
         }
-      };
-      reader.readAsText(file);
-    });
-    input.click();
-  }
 
-  document.getElementById('loadTemplateBtn').addEventListener('click', async function(){
-    document.getElementById('loadTemplateStatus').textContent = '';
-    if (fsApiSupported){
-      await renderTemplateListFromFolder();
-    } else {
-      document.getElementById('templateList').innerHTML = '<div class="row-flex"><button class="btn-secondary" id="directLoadBtn">📄 Vorlagendatei über Dialog laden</button></div>';
-      document.getElementById('directLoadBtn').addEventListener('click', loadTemplateViaFileDialog);
-    }
-    document.getElementById('loadTemplateModal').classList.add('open');
-  });
-  document.getElementById('loadTemplateCancelBtn').addEventListener('click', function(){
-    document.getElementById('loadTemplateModal').classList.remove('open');
-  });
+        function refreshUIAfterData() {
+          document.getElementById('emptyStateCard').style.display = 'none';
+          document.getElementById('resultCard').style.display = 'block';
+          renderDashboard();
+          renderRawDashboard();
+          renderTable();
+          document.getElementById('fileStatus').textContent = '✔ Datei erfolgreich verarbeitet.';
+          document.getElementById('fileStatus').className = 'status-msg status-success';
+        }
 
-  // ---------- Excel export (styled, 2 sheets, totals row, raw column filter, Sprache) ----------
-  document.getElementById('exportExcelBtn').addEventListener('click', function(){
-    if (!kopfHeader || aggregatedRows.length === 0) return;
+        function processParsedData(rows, fileName) {
+          if (!rows || rows.length < 2) {
+            document.getElementById('fileStatus').textContent = 'Keine verwertbaren Datenzeilen gefunden.';
+            document.getElementById('fileStatus').className = 'status-msg status-error';
+            return;
+          }
 
-    var visibleCols = allColumns.filter(function(c){ return columnVisibility[c.key]; });
-    var totals = computeTotals();
+          state.data = rows;
+          state.currentFileName = fileName || 'import';
+          state.aggregated = aggregateRows(rows);
 
-    // Export-Farbschema: AUSSCHLIESSLICH Schwarz, Weiß und Grau (gemäß Vorgabe)
-    var BLACK = "000000";
-    var GRAY = "C9C9C9";
-    var WHITE = "FFFFFF";
+          if (!state.aggregated.length) {
+            document.getElementById('fileStatus').textContent = 'Keine verwertbaren Datenzeilen nach Anwendung der Filter gefunden.';
+            document.getElementById('fileStatus').className = 'status-msg status-error';
+            return;
+          }
 
-    var titleStyle = { font: { bold:true, sz:16, color:{rgb:WHITE} }, fill: { fgColor:{rgb:BLACK} }, alignment:{ vertical:"center", horizontal:"left" } };
-    var kopfLabelStyle = { font: { bold:true, sz:10, color:{rgb:BLACK} }, fill: { fgColor:{rgb:GRAY} } };
-    var kopfValueStyle = { font: { bold:false, sz:11, color:{rgb:BLACK} }, fill: { fgColor:{rgb:WHITE} } };
-    var headerStyle = { font: { bold:true, sz:11, color:{rgb:WHITE} }, fill: { fgColor:{rgb:BLACK} }, alignment:{ horizontal:"center", vertical:"center" }, border:{ bottom:{style:"thin", color:{rgb:BLACK}} } };
-    var dataStyleEven = { fill: { fgColor:{rgb:GRAY} }, font:{ sz:10, color:{rgb:BLACK} } };
-    var dataStyleOdd = { fill: { fgColor:{rgb:WHITE} }, font:{ sz:10, color:{rgb:BLACK} } };
-    var totalStyle = { font: { bold:true, sz:11, color:{rgb:WHITE} }, fill: { fgColor:{rgb:BLACK} }, border:{ top:{style:"double", color:{rgb:BLACK}} } };
+          refreshUIAfterData();
+        }
 
-    var sortedRows = aggregatedRows.slice().sort(function(a,b){
-      if (a.OrdnerPrefix < b.OrdnerPrefix) return -1;
-      if (a.OrdnerPrefix > b.OrdnerPrefix) return 1;
-      return compareTermin(a.Termin, b.Termin);
-    });
+        function parseCSVText(text) {
+          const rows = [];
+          const lines = text.split(/\r?\n/);
+          for (const line of lines) {
+            if (!line.trim()) continue;
+            const splitChar = line.includes(';') && (!line.includes(',') || line.indexOf(';') < line.indexOf(',')) ? ';' : ',';
+            const cells = [];
+            let current = '';
+            let inQuotes = false;
 
-    var exportTitleText = t().exportTitle; // "Einkaufsübersicht" (DE) / "Buying Result" (EN)
+            for (let i = 0; i < line.length; i += 1) {
+              const char = line[i];
+              if (char === '"') {
+                if (inQuotes && line[i + 1] === '"') {
+                  current += '"';
+                  i += 1;
+                } else {
+                  inQuotes = !inQuotes;
+                }
+              } else if (char === splitChar && !inQuotes) {
+                cells.push(current);
+                current = '';
+              } else {
+                current += char;
+              }
+            }
 
-    var aoa = [];
-    aoa.push([exportTitleText]);
-    aoa.push([]);
-    aoa.push([kopfLabel('Konzern'), kopfHeader.Konzern]);
-    aoa.push([kopfLabel('Kunde'), kopfHeader.Kunde]);
-    aoa.push([kopfLabel('Kundenr'), kopfHeader.Kundenr]);
-    aoa.push([kopfLabel('Kampagne'), kopfHeader.Kampagne]);
-    aoa.push([kopfLabel('Agentur'), kopfHeader.Agentur]);
-    aoa.push([kopfLabel('KampagnenID'), kopfHeader.KampagnenID]);
-    aoa.push([]);
-    var headerRowIndex = aoa.length;
-    aoa.push(visibleCols.map(function(c){ return getColumnLabel(c); }));
+            cells.push(current);
+            rows.push(cells);
+          }
+          return rows;
+        }
 
-    sortedRows.forEach(function(row){
-      aoa.push(visibleCols.map(function(c){
-        if (c.key === 'Auftragsart') return auftragsartLabel(row[c.key]);
-        if (c.key === 'Medium') return getRowMediumDisplay(row);
-        var v = row[c.key] !== undefined ? row[c.key] : '';
-        if (c.type === 'number') v = applyDecimalRule(c, v || 0);
-        return v;
-      }));
-    });
+        function handleFile(file) {
+          if (!file) return;
+          const ext = file.name.split('.').pop().toLowerCase();
+          const reader = new FileReader();
 
-    var totalRowIndex = aoa.length;
-    aoa.push(visibleCols.map(function(c, i){
-      if (c.type === 'number') return applyDecimalRule(c, totals[c.key] || 0);
-      return i === 0 ? t().totalLabel : '';
-    }));
+          document.getElementById('fileStatus').textContent = 'Datei wird verarbeitet …';
+          document.getElementById('fileStatus').className = 'status-msg';
 
-    var ws1 = XLSX.utils.aoa_to_sheet(aoa);
+          if (ext === 'csv') {
+            reader.onload = (event) => {
+              const rows = parseCSVText(event.target.result);
+              processParsedData(rows, file.name);
+            };
+            reader.readAsText(file, 'UTF-8');
+            return;
+          }
 
-    // Keine Gitternetzlinien im ersten Reiter
-    ws1['!views'] = [ { showGridLines: false } ];
+          reader.onload = function (event) {
+            try {
+              const data = new Uint8Array(event.target.result);
+              const workbook = XLSX.read(data, { type: 'array' });
+              const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+              const rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1, raw: false, defval: '' });
+              processParsedData(rows, file.name);
+            } catch (error) {
+              document.getElementById('fileStatus').textContent = 'Fehler beim Lesen der Datei. Bitte prüfe das Format.';
+              document.getElementById('fileStatus').className = 'status-msg status-error';
+              console.error(error);
+            }
+          };
 
-    var mergeWidth = Math.max(visibleCols.length - 1, 1);
-    ws1['!merges'] = [ { s:{r:0,c:0}, e:{r:0,c:mergeWidth} } ];
+          reader.readAsArrayBuffer(file);
+        }
 
-    var titleCell = XLSX.utils.encode_cell({r:0,c:0});
-    if (ws1[titleCell]) ws1[titleCell].s = titleStyle;
+        function exportToExcel() {
+          if (!state.aggregated.length) {
+            document.getElementById('fileStatus').textContent = 'Keine Daten zum Exportieren vorhanden.';
+            document.getElementById('fileStatus').className = 'status-msg status-warning';
+            return;
+          }
 
-    for (var kr = 2; kr <= 7; kr++){
-      var labelCellAddr = XLSX.utils.encode_cell({r:kr,c:0});
-      var valueCellAddr = XLSX.utils.encode_cell({r:kr,c:1});
-      if (ws1[labelCellAddr]) ws1[labelCellAddr].s = kopfLabelStyle;
-      if (ws1[valueCellAddr]) ws1[valueCellAddr].s = kopfValueStyle;
-    }
+          const visibleColumns = getVisibleColumns();
+          const exportData = [
+            visibleColumns.map((column) => getColumnLabel(column.key)),
+            ...state.aggregated.map((row) => visibleColumns.map((column) => row[column.key] || '')),
+          ];
 
-    visibleCols.forEach(function(c, ci){
-      var addr = XLSX.utils.encode_cell({r:headerRowIndex, c:ci});
-      if (ws1[addr]) ws1[addr].s = headerStyle;
-    });
+          const worksheet = XLSX.utils.aoa_to_sheet(exportData);
+          const workbook = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(workbook, worksheet, 'EKE');
+          XLSX.writeFile(workbook, `${state.currentFileName || 'EKE'}_export.xlsx`);
+        }
 
-    sortedRows.forEach(function(row, ri){
-      var rIdx = headerRowIndex + 1 + ri;
-      visibleCols.forEach(function(c, ci){
-        var addr = XLSX.utils.encode_cell({r:rIdx, c:ci});
-        if (ws1[addr]) ws1[addr].s = (ri % 2 === 0) ? dataStyleOdd : dataStyleEven;
-      });
-    });
+        function bindEvents() {
+          document.getElementById('fileInput').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            handleFile(file);
+          });
 
-    visibleCols.forEach(function(c, ci){
-      var addr = XLSX.utils.encode_cell({r:totalRowIndex, c:ci});
-      if (ws1[addr]) ws1[addr].s = totalStyle;
-    });
+          const dropZone = document.getElementById('dropZone');
+          dropZone.addEventListener('click', () => document.getElementById('fileInput').click());
 
-    ws1['!cols'] = visibleCols.map(function(c){
-      return { wch: Math.max(getColumnLabel(c).length + 4, 12) };
-    });
+          ['dragenter', 'dragover'].forEach((eventName) => {
+            dropZone.addEventListener(eventName, (event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              dropZone.classList.add('hover');
+            });
+          });
 
-    // ----- Sheet 2: Rohdaten, gefiltert nach Rohdaten-Dashboard, UNVERÄNDERT -----
-    var rawSelectedIndices = [];
-    if (rawAoaData && rawAoaData.length > 0){
-      rawAoaData[0].forEach(function(h, idx){
-        if (rawColumnVisibility[String(idx)] !== false) rawSelectedIndices.push(idx);
-      });
-    }
-    var filteredRawAoa = (rawAoaData || []).map(function(row){
-      return rawSelectedIndices.map(function(idx){ return row[idx] !== undefined ? row[idx] : ''; });
-    });
+          ['dragleave', 'drop', 'dragend'].forEach((eventName) => {
+            dropZone.addEventListener(eventName, (event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              dropZone.classList.remove('hover');
+            });
+          });
 
-    var ws2 = XLSX.utils.aoa_to_sheet(filteredRawAoa.length ? filteredRawAoa : [[]]);
-    if (filteredRawAoa.length > 0){
-      filteredRawAoa[0].forEach(function(h, ci){
-        var addr = XLSX.utils.encode_cell({r:0,c:ci});
-        if (ws2[addr]) ws2[addr].s = { font:{bold:true, color:{rgb:WHITE}}, fill:{fgColor:{rgb:BLACK}} };
-      });
-    }
+          dropZone.addEventListener('drop', (event) => {
+            const file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
+            if (file) handleFile(file);
+          });
 
-    var wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws1, exportTitleText);
-    XLSX.utils.book_append_sheet(wb, ws2, currentLanguage === 'en' ? 'Raw Data' : 'Rohdaten');
-    XLSX.writeFile(wb, 'Aggregiertes_Ergebnis.xlsx');
-  });
+          document.getElementById('durchhangBtn').addEventListener('click', () => {
+            state.durchhang = !state.durchhang;
+            const button = document.getElementById('durchhangBtn');
+            button.classList.toggle('active', state.durchhang);
+            if (state.data.length) {
+              state.aggregated = aggregateRows(state.data);
+              renderTable();
+            }
+          });
 
-})();
-</script>
+          document.getElementById('orteBtn').addEventListener('click', () => {
+            state.summarizePlaces = !state.summarizePlaces;
+            const button = document.getElementById('orteBtn');
+            button.classList.toggle('active', state.summarizePlaces);
+            if (state.data.length) {
+              state.aggregated = aggregateRows(state.data);
+              renderTable();
+            }
+          });
 
-</body></html>
+          document.getElementById('toggleDashboardBtn').addEventListener('click', () => {
+            const el = document.getElementById('columnDashboard');
+            el.classList.toggle('open');
+          });
+
+          document.getElementById('toggleRawDashboardBtn').addEventListener('click', () => {
+            const el = document.getElementById('rawColumnDashboard');
+            el.classList.toggle('open');
+          });
+
+          document.getElementById('exportExcelBtn').addEventListener('click', exportToExcel);
+
+          document.getElementById('rawSelectAllBtn').addEventListener('click', () => {
+            state.data[0].forEach((_, idx) => { state.rawColumnVisibility[idx] = true; });
+            renderRawDashboard();
+          });
+
+          document.getElementById('rawSelectNoneBtn').addEventListener('click', () => {
+            state.data[0].forEach((_, idx) => { state.rawColumnVisibility[idx] = false; });
+            renderRawDashboard();
+          });
+
+          document.querySelectorAll('input[name="langOption"]').forEach((radio) => {
+            radio.addEventListener('change', () => {
+              state.lang = radio.value;
+              renderDashboard();
+              renderTable();
+            });
+          });
+
+          document.getElementById('kundenpreisBtn').addEventListener('click', () => {
+            document.getElementById('kundenpreisModal').classList.add('open');
+          });
+
+          document.getElementById('modalCancelBtn').addEventListener('click', () => {
+            document.getElementById('kundenpreisModal').classList.remove('open');
+          });
+
+          document.getElementById('autoNameBtn').addEventListener('click', () => {
+            const colA = document.getElementById('selectColA').value;
+            const colB = document.getElementById('selectColB').value;
+            const colC = document.getElementById('selectColC').value;
+            const selected = [colA, colB, colC].filter((v) => v && v !== '__none__');
+            const name = selected.length ? `Kundenpreis ${selected.join('+')}` : 'Kundenpreis';
+            document.getElementById('newColName').value = name;
+          });
+
+          document.getElementById('modalAddBtn').addEventListener('click', () => {
+            const name = document.getElementById('newColName').value.trim();
+            if (!name) {
+              document.getElementById('modalStatus').textContent = 'Bitte einen Spaltennamen eingeben.';
+              document.getElementById('modalStatus').className = 'status-msg status-error';
+              return;
+            }
+
+            const colA = document.getElementById('selectColA').value;
+            const colB = document.getElementById('selectColB').value;
+            const colC = document.getElementById('selectColC').value;
+            const customKey = name;
+
+            state.customColumns.push({
+              key: customKey,
+              type: 'number',
+              decimals: 2,
+              colAKey: colA,
+              colBKey: colB,
+              colCKey: colC,
+            });
+
+            if (!state.columns.some((col) => col.key === customKey)) {
+              state.columns.push({ key: customKey, type: 'number', decimals: 2 });
+              state.columnVisibility[customKey] = true;
+            }
+
+            state.aggregated.forEach((row) => {
+              const a = colA !== '__none__' ? Number(row[colA]) || 0 : 0;
+              const b = colB !== '__none__' ? Number(row[colB]) || 0 : 0;
+              const c = colC !== '__none__' ? Number(row[colC]) || 0 : 0;
+              row[customKey] = a + b + c;
+            });
+
+            renderDashboard();
+            renderTable();
+            document.getElementById('kundenpreisModal').classList.remove('open');
+          });
+
+          document.getElementById('chooseFolderBtn').addEventListener('click', () => {
+            document.getElementById('fileStatus').textContent = 'Vorlagenordner-Feature ist hier deaktiviert. Bitte Datei direkt öffnen.';
+            document.getElementById('fileStatus').className = 'status-msg status-warning';
+          });
+
+          document.getElementById('saveTemplateBtn').addEventListener('click', () => {
+            document.getElementById('fileStatus').textContent = 'Vorlage speichern ist aktuell nicht aktiviert.';
+            document.getElementById('fileStatus').className = 'status-msg status-warning';
+          });
+
+          document.getElementById('loadTemplateBtn').addEventListener('click', () => {
+            document.getElementById('fileStatus').textContent = 'Vorlage laden ist aktuell nicht aktiviert.';
+            document.getElementById('fileStatus').className = 'status-msg status-warning';
+          });
+        }
+
+        function init() {
+          initColumnVisibility();
+          bindEvents();
+          renderDashboard();
+          renderRawDashboard();
+        }
+
+        init();
+      })();
+    </script>
+  </body>
+</html>
